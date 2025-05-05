@@ -29,9 +29,12 @@ public class BarriosModel {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String nombre;
+    @Column(nullable = false)
     private String descripcion;
     private String imagen;
+    @Column(nullable = false)
     private String ubicacion;
     @Column(name= "codigo_postal", nullable = true)
     private String codigoPostal;

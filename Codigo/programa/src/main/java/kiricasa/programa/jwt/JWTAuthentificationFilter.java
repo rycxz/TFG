@@ -8,6 +8,8 @@ package kiricasa.programa.jwt;
 import java.io.IOException;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.lang.NonNull;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -25,10 +27,21 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JWTAuthentificationFilter  extends OncePerRequestFilter{
 
+
+
+
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws  ServletException,  IOException {
+    protected void doFilterInternal( @NonNull HttpServletRequest request,  @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws  ServletException,  IOException {
+        String path = request.getServletPath();
+        if (path.startsWith("/auth")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        System.out.println("Filtro intercepta: " + request.getServletPath());
+
         /*por lo que yo he entendio este metodo es el encargado de verficar el token que hemos creado por lo que lo primero lo recibe  y deùes se valida y devuelve la respuesta */
         String token = getTokenFromRequest(request);
+
         if (token != null ) {
             // Si el token es válido, puedes establecer la autenticación en el contexto de seguridad
             filterChain.doFilter(request, response);

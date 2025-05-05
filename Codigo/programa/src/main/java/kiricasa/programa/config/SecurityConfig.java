@@ -7,12 +7,17 @@ package kiricasa.programa.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import static org.springframework.security.config.Customizer.withDefaults;
+
+
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import kiricasa.programa.jwt.JWTAuthentificationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationProvider;
 
 /**
  *
@@ -22,6 +27,9 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+    public final JWTAuthentificationFilter jwtAuthentificationFilter;
+    public final AuthenticationProvider authenticationProvider;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -29,9 +37,12 @@ public class SecurityConfig {
         .authorizeHttpRequests(authRequest ->
         authRequest
                 .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/rutas/**").permitAll()
                 .anyRequest().authenticated()
-        ).formLogin(withDefaults()).build();
+        )
+        .sessionManagement(sesionManagement -> sesionManagement
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider).addFilterBefore(jwtAuthentificationFilter,UsernamePasswordAuthenticationFilter.class)
+        .build();
 
     }
 

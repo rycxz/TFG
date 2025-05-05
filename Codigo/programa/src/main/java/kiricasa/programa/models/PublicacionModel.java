@@ -32,15 +32,19 @@ public class PublicacionModel {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
         private Long id;
+    @Column(nullable = false)
     private String titulo;
+    @Column(nullable = false)
     private String descripcion;
     @CreationTimestamp
     private LocalDateTime fechaPublicacion;
     private String imagen;
+    @Column(nullable = false)
     private String ubicacion;
     private String tipo;
     private String precio;
     private String estado;
+    @Column(nullable = false)
     private int metrosCuadrados;
     private String habitaciones;
     private boolean permiteMascotas;
@@ -49,5 +53,6 @@ public class PublicacionModel {
     private Long idUsuario;
     @Column(name = "id_barrio", nullable = false)
     private Long idBarrio;
+
 
 }

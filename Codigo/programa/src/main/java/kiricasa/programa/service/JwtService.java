@@ -1,0 +1,55 @@
+package kiricasa.programa.service;
+
+import java.security.Key;
+import java.sql.Date;
+import java.util.HashMap;
+
+
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
+import io.jsonwebtoken.security.Keys;
+
+
+@Service
+public class JwtService {
+    //clave secreta para encriptar el token
+    //en este caso la clave secreta es una cadena de caracteres aleatoria
+    //en un caso real esta clave secreta deberia ser almacenada en un lugar seguro
+    //y no deberia ser hardcodeada en el codigo fuente
+    private final String SECRET_KEY = "bWktc3VwZXItY2xhdmUtc2VjcmV0YS0xMjM0NTY3ODkw";
+
+    public String getToken(UserDetails usuario) {
+        return getToken(new HashMap<>(), usuario);
+    }
+
+    /**
+     *  metido que genera el token con el uso de la libreria Jwts con el algoritmo HS256
+     * @param extraClaims
+     * @param usuario
+     * @return token
+     */
+    private String getToken(HashMap<String, Object> extraClaims, UserDetails usuario) {
+
+
+
+        return Jwts.builder().setClaims(extraClaims)
+                .setSubject(usuario.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24 * 60))
+                .signWith(getKey(),SignatureAlgorithm.HS256).compact();
+    }
+
+        /**
+         * metodo que encripa la clave secreta que hemos definido en la variable
+         * @return
+         */
+        private Key getKey() {
+            return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+        }
+
+
+}

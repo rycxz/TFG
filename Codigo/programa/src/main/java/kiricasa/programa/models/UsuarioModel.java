@@ -6,17 +6,28 @@
 package kiricasa.programa.models;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import kiricasa.programa.roles.UsuarioRol;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -27,22 +38,52 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "usuarios")
 
-public class UsuarioModel {
+public class UsuarioModel implements UserDetails {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
    private  String nombre;
    private String password;
+   @Column(nullable = false, unique = true)
    private  String email;
    private String numero;
   private  boolean esAdmin;
-  private LocalDateTime fechaNacimiento;
+  private LocalDate fechaNacimiento;
   @CreationTimestamp
   private LocalDateTime fechaRegistro;
   @UpdateTimestamp
   private LocalDateTime fechaAdmin;
+  @Enumerated(EnumType.STRING)
+      UsuarioRol rol;
 
-}
+
+
+
+      @Override
+      public Collection<? extends GrantedAuthority> getAuthorities() {
+        // TODO Auto-generated method stub
+        return List.of(new SimpleGrantedAuthority(rol.name()));
+      }
+
+
+
+
+
+      @Override
+        public String getUsername() {
+            return nombre;
+        }
+        }
+
+
+
+
+
+
+
+
