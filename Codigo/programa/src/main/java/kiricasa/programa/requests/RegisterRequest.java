@@ -1,4 +1,4 @@
-package kiricasa.programa.controller;
+package kiricasa.programa.requests;
 
 import java.time.LocalDate;
 
@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequets {
+public class RegisterRequest {
     String nombre;
     String password;
     String email;

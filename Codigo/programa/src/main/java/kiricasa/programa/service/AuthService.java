@@ -3,14 +3,19 @@ package kiricasa.programa.service;
 
 import java.time.LocalDateTime;
 
-
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import kiricasa.programa.controller.AuthReponse;
-import kiricasa.programa.controller.LoginRequest;
-import kiricasa.programa.controller.RegisterRequets;
 import kiricasa.programa.models.UsuarioModel;
 import kiricasa.programa.repository.UsuarioRepository;
+import kiricasa.programa.requests.LoginRequest;
+import kiricasa.programa.requests.RegisterRequest;
+import kiricasa.programa.response.AuthReponse;
 import kiricasa.programa.roles.UsuarioRol;
 import lombok.RequiredArgsConstructor;
 
@@ -20,10 +25,28 @@ public class AuthService {
 
      private final UsuarioRepository usuarioRepository;
      private final JwtService jwtService;
-    public AuthReponse login(LoginRequest request) {
+     private final PasswordEncoder passwordEncoder;
+     private final AuthenticationManager authenticationManager;
 
-      return null;
-    }
+     public AuthReponse login(LoginRequest request) {
+
+
+      try {
+          authenticationManager.authenticate(
+              new UsernamePasswordAuthenticationToken(request.getNombre(), request.getPassword())
+          );
+
+      } catch (AuthenticationException e) {
+
+          throw e; // relanzamos para mantener el comportamiento original (403)
+      }
+
+      UserDetails userdetails = usuarioRepository.findByNombreIgnoreCase(request.getNombre())
+              .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+      String token = jwtService.getToken(userdetails);
+      return AuthReponse.builder().token(token).build();
+  }
 
     /**
      * metodo que recibe el requets para crear un nuevo objeto usuario con el builder  lo guarda en la BBDD
@@ -31,32 +54,33 @@ public class AuthService {
      * @param request
      * @return
      */
-    public AuthReponse register(RegisterRequets request) {
-  UsuarioModel usuario = UsuarioModel.builder()
-                        .nombre(request.getNombre())
-                        .password(request.getPassword())
-                        .email(request.getEmail())
-                        .numero(request.getNumero())
-                        .esAdmin(false)
-                        .fechaNacimiento(request.getFechaNacimiento())
-                        .fechaRegistro(LocalDateTime.now())
-                        .fechaAdmin(null)
-                        .rol(UsuarioRol.USER)
-                        .build();
-                        //insertamos el nuevo registo en la BBDD
-                        usuarioRepository.save(usuario);
-                        //devolvemos el token de acceso
-                        //el token se genera con el metodo getToken de la clase JwtService
-                        String token = jwtService.getToken(usuario);
-                    System.out.println("🔑 Token generado: " + token);
+    public AuthReponse register(RegisterRequest request) {
+      // Verificar duplicados
+      if (usuarioRepository.findByEmail(request.getEmail()).isPresent()) {
+          throw new RuntimeException("El email ya está registrado");
+      }
+
+      UsuarioModel usuario = UsuarioModel.builder()
+              .nombre(request.getNombre())
+              .password(passwordEncoder.encode(request.getPassword()))
+              .email(request.getEmail())
+              .numero(request.getNumero())
+              .esAdmin(false)
+              .fechaNacimiento(request.getFechaNacimiento())
+              .fechaRegistro(LocalDateTime.now())
+              .fechaAdmin(null)
+              .rol(UsuarioRol.USER)
+              .build();
+
+      usuarioRepository.save(usuario);
+
+      String token = jwtService.getToken(usuario);
 
 
+      return AuthReponse.builder()
+              .token(token)
+              .build();
+  }
 
-                        return AuthReponse.builder()
-                        .token(jwtService.getToken(usuario))
-                        .build();
-
-
-    }
 
 }
