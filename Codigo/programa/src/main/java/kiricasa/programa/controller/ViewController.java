@@ -8,14 +8,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/auth")
 public class ViewController {
 
-    @GetMapping("/login")
-    public String showLoginPage() {
-        return "login-registro/login";
-    }
-
     @GetMapping("/register")
     public String showRegisterPage() {
-        System.out.println("register--------------- pero por get ");
-        return "login-registro/registro";
+        System.out.println("register--------------- pero por get");
+        return "registro";  // Thymeleaf buscará templates/registro.html
+    }
+
+    @GetMapping("/login")
+    public String showLoginPage() {
+        return "login";
     }
 }

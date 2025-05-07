@@ -5,15 +5,16 @@
 
 package kiricasa.programa.controller;
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
 
+import jakarta.servlet.http.HttpSession;
+import kiricasa.programa.models.UsuarioModel;
+import kiricasa.programa.repository.UsuarioRepository;
 import kiricasa.programa.requests.LoginRequest;
 import kiricasa.programa.requests.RegisterRequest;
-import kiricasa.programa.response.AuthReponse;
 import kiricasa.programa.service.AuthService;
 import lombok.RequiredArgsConstructor;
 
@@ -21,23 +22,38 @@ import lombok.RequiredArgsConstructor;
  *
  * @author recur
  */
-@RestController
+@Controller
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
         private final AuthService authService;
+        private final UsuarioRepository usuarioRepository;
 
-        @PostMapping("/login")
-        public ResponseEntity<AuthReponse> login(@RequestBody LoginRequest request) {
+                        @PostMapping("/login")
+                        public String login(@ModelAttribute LoginRequest request, HttpSession session) {
+                        String token = authService.login(request).getToken();
+                        session.setAttribute("jwt", token);
 
-            return ResponseEntity.ok(authService.login(request));
-        }
+                                    UsuarioModel usuario = usuarioRepository.findByNombreIgnoreCase(request.getNombre())
+                        .orElse(null);
+                        session.setAttribute("usuario", usuario);
+                        return "redirect:/home"; // después del login o registro
 
-        @PostMapping("/register")
-        public ResponseEntity<AuthReponse> register(@RequestBody RegisterRequest request) {
+                        }
 
-                return ResponseEntity.ok(authService.register(request));
-        }
+
+                        @PostMapping("/register")
+                        public String register(@ModelAttribute RegisterRequest request, HttpSession session) {
+                            String token = authService.register(request).getToken();
+                            session.setAttribute("jwt", token);
+                            UsuarioModel usuario = usuarioRepository.findByNombreIgnoreCase(request.getNombre())
+                                .orElse(null);
+                            session.setAttribute("usuario", usuario);
+                           // System.out.println("request.isRecibirNotificaciones()" + request.isRecibirNotificaciones());
+                           return "redirect:/home"; // después del login o registro
+
+                        }
+
 
 
 

@@ -60,7 +60,8 @@ public class UsuarioModel implements UserDetails {
   private LocalDateTime fechaAdmin;
   @Enumerated(EnumType.STRING)
       UsuarioRol rol;
-
+      @Column(name="recibir_noti",nullable = false)
+        private boolean recibirNotificaciones;
 
 
 

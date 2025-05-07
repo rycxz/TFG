@@ -3,6 +3,7 @@ package kiricasa.programa.service;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +13,10 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import kiricasa.programa.models.UsuarioModel;
+
+import org.springframework.beans.factory.annotation.Value;
+
 
 
 @Service
@@ -21,11 +26,47 @@ public class JwtService {
     //en un caso real esta clave secreta deberia ser almacenada en un lugar seguro
     //y no deberia ser hardcodeada en el codigo fuente
     private final String SECRET_KEY = "bWktc3VwZXItY2xhdmUtc2VjcmV0YS0xMjM0NTY3ODkw";
-
+    @Value("${jwt.expiration}") // duración en milisegundos
+    private long jwtExpiration;
+    /**
+     * metodo que devuelve el token de un usuario
+     *  */
     public String getToken(UserDetails usuario) {
         return getToken(new HashMap<>(), usuario);
     }
 
+    /**
+     * metodo que devuelve el token de un usuario details
+     * @param usuario
+     * @return token
+     */
+    public String generateToken(UserDetails userDetails) {
+        return buildToken(new HashMap<>(), userDetails);
+    }
+
+    /**
+     * metodo que devuelve el token de un usuario model
+     * @param usuario
+     * @return token
+     */
+    public String generateToken(UsuarioModel usuario) {
+        return buildToken(new HashMap<>(), usuario);
+    }
+    /**
+     * metodo que devuelve el token creado de un usuario details
+     * @param extraClaims
+     * @param usuario
+     * @return token
+     */
+    private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+        return Jwts.builder()
+                .setClaims(extraClaims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .signWith(getKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
     /**
      *  metido que genera el token con el uso de la libreria Jwts con el algoritmo HS256
      * @param extraClaims
@@ -59,6 +100,11 @@ public class JwtService {
             final String username = getUsernameFromToken(token);
             return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
         }
+        public boolean isTokenValid(String token) {
+            String username = getUsernameFromToken(token);
+            return (username != null && !isTokenExpired(token));
+        }
+
         private Claims getAllClaims(String token){
             return Jwts.parserBuilder().setSigningKey(getKey()).build().parseClaimsJws(token).getBody();
         }

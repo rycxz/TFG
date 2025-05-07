@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+
+<div th:fragment="header_nologged">
+    <p>No has iniciado sesión</p>
+    <a href="/auth/login">Iniciar sesión</a>
+</div>
+
+<div th:fragment="header_user(nombre)">
+    <p>Bienvenido, <span th:text="${nombre}">nombre</span>!</p>
+    <a href="/logout">Cerrar sesión</a>
+</div>
+
+<div th:fragment="header_admin(nombre)">
+    <p>Panel de admin: <span th:text="${nombre}">admin</span></p>
+    <a href="/logout">Cerrar sesión</a>
+</div>
+
+</body>
+</html>

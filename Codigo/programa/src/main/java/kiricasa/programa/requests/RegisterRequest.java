@@ -28,5 +28,8 @@ public class RegisterRequest {
     LocalDate fechaNacimiento;
     LocalDate fechaRegistro;
     LocalDate fechaAdmin;
-    UsuarioRol rol; // Added field
+    UsuarioRol rol;
+    private boolean recibirNotificaciones;
+
+
 }

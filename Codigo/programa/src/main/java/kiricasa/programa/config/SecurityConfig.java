@@ -21,20 +21,21 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                    .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-                    .requestMatchers("/auth/**", "/login", "/register", "/css/**", "/js/**").permitAll()
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    return http
+        .csrf(csrf -> csrf.disable())
+        .authorizeHttpRequests(auth -> auth
+            .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
+            .requestMatchers("/auth/**", "/css/**", "/js/**", "/images/**").permitAll()
+            .anyRequest().authenticated()
+        )
+        .sessionManagement(sess -> sess
+        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+    )
 
-                    .anyRequest().authenticated()
-                )
-                .sessionManagement(sess -> sess
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthentificationFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
-    }
+        .authenticationProvider(authenticationProvider)
+        .addFilterBefore(jwtAuthentificationFilter, UsernamePasswordAuthenticationFilter.class)
+        .build();
+}
+
 }

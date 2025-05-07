@@ -43,7 +43,7 @@ public class AuthService {
 
       UserDetails userdetails = usuarioRepository.findByNombreIgnoreCase(request.getNombre())
               .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
-
+        System.out.println("userdetails: " + userdetails);
       String token = jwtService.getToken(userdetails);
       return AuthReponse.builder().token(token).build();
   }
@@ -60,6 +60,7 @@ public class AuthService {
           throw new RuntimeException("El email ya está registrado");
       }
 
+
       UsuarioModel usuario = UsuarioModel.builder()
               .nombre(request.getNombre())
               .password(passwordEncoder.encode(request.getPassword()))
@@ -70,6 +71,7 @@ public class AuthService {
               .fechaRegistro(LocalDateTime.now())
               .fechaAdmin(null)
               .rol(UsuarioRol.USER)
+              .recibirNotificaciones(request.isRecibirNotificaciones())
               .build();
 
       usuarioRepository.save(usuario);
