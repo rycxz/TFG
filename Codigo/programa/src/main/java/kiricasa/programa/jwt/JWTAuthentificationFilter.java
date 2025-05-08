@@ -46,7 +46,7 @@ public class JWTAuthentificationFilter  extends OncePerRequestFilter{
 
         // Permitir rutas públicas sin autenticación
         if (path.startsWith("/auth") || path.startsWith("/css") || path.startsWith("/js") ||
-            path.startsWith("/images") || path.endsWith(".html")||path.startsWith("/nlogged")) {
+            path.startsWith("/images") || path.endsWith(".html")||path.startsWith("/nl")) {
             filterChain.doFilter(request, response);
             return;
         }

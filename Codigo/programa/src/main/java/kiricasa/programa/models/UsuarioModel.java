@@ -17,6 +17,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -24,6 +25,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import kiricasa.programa.roles.UsuarioRol;
 import lombok.AllArgsConstructor;
@@ -47,28 +49,31 @@ public class UsuarioModel implements UserDetails {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
-   private  String nombre;
-   private String password;
-   @Column(nullable = false, unique = true)
-   private  String email;
-   private String numero;
-  private  boolean esAdmin;
-  private LocalDate fechaNacimiento;
-  @CreationTimestamp
-  private LocalDateTime fechaRegistro;
-  @UpdateTimestamp
-  private LocalDateTime fechaAdmin;
-  @Enumerated(EnumType.STRING)
-      UsuarioRol rol;
-      @Column(name="recibir_noti",nullable = false)
+    private  String nombre;
+    private String password;
+    @Column(nullable = false, unique = true)
+    private  String email;
+    private String numero;
+    private  boolean esAdmin;
+    private LocalDate fechaNacimiento;
+    @CreationTimestamp
+    private LocalDateTime fechaRegistro;
+    @UpdateTimestamp
+    private LocalDateTime fechaAdmin;
+    @Enumerated(EnumType.STRING)
+    UsuarioRol rol;
+    @Column(name="recibir_noti",nullable = false)
         private boolean recibirNotificaciones;
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PublicacionModel> anuncios;
 
 
 
-      @Override
-      public Collection<? extends GrantedAuthority> getAuthorities() {
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(rol.name()));
-      }
+    }
 
 
 
@@ -94,10 +99,10 @@ public class UsuarioModel implements UserDetails {
           return true;
       }
 
-      @Override
-      public boolean isEnabled() {
-          return true;
-      }
+    @Override
+    public boolean isEnabled() {
+    return true;
+    }
 
 
         }

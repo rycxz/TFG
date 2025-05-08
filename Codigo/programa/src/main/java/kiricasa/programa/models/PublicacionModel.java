@@ -11,9 +11,12 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -49,10 +52,22 @@ public class PublicacionModel {
     private String habitaciones;
     private boolean permiteMascotas;
     private int numeroCompañeros;
-    @Column(name = "id_usuario", nullable = false)
-    private Long idUsuario;
-    @Column(name = "id_barrio", nullable = false)
-    private Long idBarrio;
+       /*
+     * hay que tener algo en cuenta aqui
+     * antes cuando inicaliabas un anucnio hacias :
+     *  publicacion.setIdUsuario(buscabas el usuario por id);
+     *
+     * ahora hay que hacer:
+     * publicacion.setUsuario(usuarioRepository.findById(id).orElseThrow());
+     * esto es por que asi Spring Data JPA puede hacer joins automáticos yo antes lo hacia mal
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario", nullable = false)
+    private UsuarioModel usuario;
+    //esto aplica igual que para lo de arriba
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_barrio", nullable = false)
+    private BarriosModel barrio;
 
 
 }

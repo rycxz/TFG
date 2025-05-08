@@ -1,22 +1,95 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head></head>
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800&family=Cabin+Rounded&display=swap" rel="stylesheet">
+
+</head>
 <body>
-
+<!-- No logueado -->
 <div th:fragment="header_nologged">
-    <p>No has iniciado sesión</p>
-    <a href="/auth/login">Iniciar sesión</a>
+    <header class="kiri-header">
+        <div class="logo"><img src="/images/elementos/sinfondo.png" alt="" srcset=""></div>
+
+        <div class="search-bar">
+            <input type="text" placeholder="Buscar..." />
+            <button><img src="/images/elementos/icono-buscar.svg" alt="Buscar" id="buscar"></button>
+        </div>
+
+        <div class="icons">
+            <a href="/auth/login" class="login-button">Iniciar sesión</a>
+        </div>
+    </header>
+    <div class="barrios-filtro">
+        <a href="#" class="barrio-btn">San José</a>
+        <a href="#" class="barrio-btn">Centro</a>
+        <a href="#" class="barrio-btn">Universidad</a>
+        <a href="#" class="barrio-btn">La Almozara</a>
+        <a href="#" class="barrio-btn">Torrero-La Paz</a>
+        <a href="#" class="barrio-btn">Las Fuentes</a>
+        <a href="#" class="barrio-btn">Oliver-Valdefierro</a>
+        <a href="#" class="barrio-btn">Miralbueno</a>
+    </div>
+
 </div>
 
+
+<!-- Usuario -->
 <div th:fragment="header_user(nombre)">
-    <p>Bienvenido, <span th:text="${nombre}">nombre</span>!</p>
-    <a href="/logout">Cerrar sesión</a>
+    <header class="kiri-header">
+        <div class="logo"><img src="/images/elementos/sinfondo.png" alt="" srcset=""></div>
+
+        <div class="search-bar">
+            <input type="text" placeholder="Buscar..." />
+            <button><img src="/images/elementos/icono-buscar.svg" alt="Buscar" id="buscar"></button>
+        </div>
+
+        <div class="icons">
+            <a href="#"><img src="/images/elementos/icono-corazon.svg" alt="Favoritos"></a>
+            <a href="#"><img src="/images/elementos/icono-usuario.svg" alt="Usuario"></a>
+        </div>
+    </header>
+    <div class="barrios-filtro">
+        <a href="#" class="barrio-btn">San José</a>
+        <a href="#" class="barrio-btn">Centro</a>
+        <a href="#" class="barrio-btn">Universidad</a>
+        <a href="#" class="barrio-btn">La Almozara</a>
+        <a href="#" class="barrio-btn">Torrero-La Paz</a>
+        <a href="#" class="barrio-btn">Las Fuentes</a>
+        <a href="#" class="barrio-btn">Oliver-Valdefierro</a>
+        <a href="#" class="barrio-btn">Miralbueno</a>
+    </div>
+
 </div>
 
+
+<!-- Admin -->
 <div th:fragment="header_admin(nombre)">
-    <p>Panel de admin: <span th:text="${nombre}">admin</span></p>
-    <a href="/logout">Cerrar sesión</a>
+    <header class="kiri-header">
+        <div class="logo"><img src="/images/elementos/sinfondo.png" alt="" srcset=""></div>
+
+        <div class="search-bar">
+            <input type="text" placeholder="Buscar..." />
+            <button><img src="/images/elementos/icono-buscar.svg" alt="Buscar" id="buscar"></button>
+        </div>
+
+        <div class="icons">
+            <span class="admin-label">Admin: <span th:text="${nombre}">Admin</span></span>
+            <a href="/logout" class="logout-button">Cerrar sesión</a>
+        </div>
+    </header>
+    <div class="barrios-filtro">
+        <a href="#" class="barrio-btn">San José</a>
+        <a href="#" class="barrio-btn">Centro</a>
+        <a href="#" class="barrio-btn">Universidad</a>
+        <a href="#" class="barrio-btn">La Almozara</a>
+        <a href="#" class="barrio-btn">Torrero-La Paz</a>
+        <a href="#" class="barrio-btn">Las Fuentes</a>
+        <a href="#" class="barrio-btn">Oliver-Valdefierro</a>
+        <a href="#" class="barrio-btn">Miralbueno</a>
+    </div>
+
 </div>
+
 
 </body>
 </html>

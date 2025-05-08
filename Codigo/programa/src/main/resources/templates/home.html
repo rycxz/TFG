@@ -1,24 +1,38 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800&family=Cabin+Rounded&display=swap" rel="stylesheet">
+
+    <!-- Carga condicional de estilos -->
+    <th:block th:if="${usuario == null}">
+        <link rel="stylesheet" th:href="@{/css/headers/estilosHeaderNoLogged.css}">
+    </th:block>
+    <th:block th:if="${usuario != null and usuario.rol.name() == 'USER'}">
+        <link rel="stylesheet" th:href="@{/css/headers/estilosHeaderLogged.css}">
+    </th:block>
+    <th:block th:if="${usuario != null and usuario.rol.name() == 'ADMIN'}">
+        <link rel="stylesheet" th:href="@{/css/headers/estilosAdmin.css}">
+    </th:block>
 </head>
 <body>
+
+    <!-- Header según usuario -->
     <div th:if="${usuario == null}">
         <div th:replace="fragmentos/header :: header_nologged"></div>
     </div>
-
     <div th:if="${usuario != null and usuario.rol.name() == 'USER'}">
         <div th:replace="fragmentos/header :: header_user(${usuario.nombre})"></div>
     </div>
-
     <div th:if="${usuario != null and usuario.rol.name() == 'ADMIN'}">
         <div th:replace="fragmentos/header :: header_admin(${usuario.nombre})"></div>
     </div>
 
-<h1>Contenido principal</h1>
+    <h1>Contenido principal</h1>
     holaa
+
 </body>
 </html>

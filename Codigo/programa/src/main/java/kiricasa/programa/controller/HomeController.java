@@ -32,7 +32,7 @@ public class HomeController {
         System.out.println("usuario en home: " + usuario);
         System.out.println("token en home: " + token);
         if (usuario == null || token == null) {
-            return "redirect:/auth/login";
+            return "redirect:/nl/home";
         }
 
         model.addAttribute("usuario", usuario);

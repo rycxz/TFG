@@ -100,6 +100,23 @@
     .login-buttons button:hover {
       background-color: #b94535;
     }
+    .back-button {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  background-color: var(--kiricasa-red);
+  color: white;
+  padding: 0.5em 1.2em;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #b94535;
+}
+
 
     @media (max-width: 500px) {
       .login-card {
@@ -120,6 +137,9 @@
 <body>
 
   <div class="login-card">
+    <a href="javascript:history.back()" class="back-button">← Volver</a>
+
+
     <div class="register-link">
       <span>¿No tienes cuenta?</span>
       <a th:href="@{/auth/register}">Regístrate</a>
