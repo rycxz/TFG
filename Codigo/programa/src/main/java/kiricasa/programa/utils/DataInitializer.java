@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 
 import com.github.javafaker.Faker;
 
+import kiricasa.programa.enums.TipoPiso;
+import kiricasa.programa.enums.UsuarioRol;
 import kiricasa.programa.models.AnunciosVistosModel;
 import kiricasa.programa.models.BarriosModel;
 import kiricasa.programa.models.FavoritosModel;
@@ -25,7 +27,6 @@ import kiricasa.programa.repository.BarriosRepository;
 import kiricasa.programa.repository.FavoritosRepository;
 import kiricasa.programa.repository.PublicacionRepository;
 import kiricasa.programa.repository.UsuarioRepository;
-import kiricasa.programa.roles.UsuarioRol;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -70,9 +71,10 @@ public class DataInitializer implements CommandLineRunner {
                     .build();
                 usuarioRepository.save(admin);
             }
-
             //ahora mediante el faker creo 10 usuarios
             //es lo mas parecido al factory de laravel
+            if (usuarioRepository.count() <= 1) {
+
             for (int i = 0; i < 10; i++) {
                 UsuarioModel user = UsuarioModel.builder()
                     .nombre(faker.name().username())
@@ -88,11 +90,17 @@ public class DataInitializer implements CommandLineRunner {
 
                 usuarioRepository.save(user);
             }
+            System.out.println("Creando usuarios...");
+        }
             //creo 10 barrios
             publicaciones = publicacionRepository.findAll();
             usuarios   = usuarioRepository.findAll();
-
-            List<BarriosModel> barrios = List.of(
+            List<BarriosModel> barrios = barrioRepository.findAll();
+            //recupero los barrios de la base  y compruebo antes d ehacer el insert
+            //si no hay barrios, los creo
+            if (barrioRepository.count() == 0) {
+                System.out.println("Creando barrios...");
+            barrios = List.of(
                 new BarriosModel(null, "Delicias", "Barrio popular y multicultural con mucha vida comercial", "delicias.jpg", "Avenida de Madrid", "50017", "€450 - €800", 0),
                 new BarriosModel(null, "Actur-Rey Fernando", "Moderno y bien comunicado, junto al río Ebro", "actur.jpg", "Calle Gertrudis Gómez de Avellaneda", "50018", "€500 - €900", 0),
                 new BarriosModel(null, "San José", "Zona tradicional con buen acceso al centro y servicios", "sanjose.jpg", "Avenida San José", "50008", "€400 - €750", 0),
@@ -106,14 +114,17 @@ public class DataInitializer implements CommandLineRunner {
             );
 
                 barrios.forEach(barrioRepository::save);
-
+            }
             //creo 10 publicaciones
+            if (publicacionRepository.count() == 0 && !usuarios.isEmpty() && !barrios.isEmpty()) {
+                System.out.println("Creando publicaciones...");
             for (int i = 0; i < 10; i++) {
                 PublicacionModel pub = new PublicacionModel();
                 pub.setTitulo(faker.company().name());
                 pub.setDescripcion(faker.lorem().paragraph(2));
                 pub.setUbicacion(faker.address().streetAddress());
-                pub.setTipo(faker.options().option("Piso", "Habitación", "Estudio"));
+               pub.setTipo(faker.options().option(TipoPiso.HOMBRES, TipoPiso.MUJERES, TipoPiso.MIXTO, TipoPiso.SOLO));
+
                 pub.setPrecio(String.valueOf(faker.number().numberBetween(300, 1200)) + "€");
                 pub.setEstado(faker.options().option("Disponible", "Alquilado"));
                 pub.setMetrosCuadrados(faker.number().numberBetween(30, 120));
@@ -122,10 +133,19 @@ public class DataInitializer implements CommandLineRunner {
                 pub.setNumeroCompañeros(faker.number().numberBetween(0, 3));
                 pub.setUsuario(faker.options().nextElement(usuarios));
                 pub.setBarrio(faker.options().nextElement(barrios));
-                pub.setImagen("imagen" + i + ".jpg");
+                pub.setImagen("imagen_0.jpg");
+                pub.setImagen2("imagen_2.jpg");
+                pub.setImagen3("imagen_3.jpg");
+                pub.setImagen4("imagen_4.jpg");
+                pub.setImagen5("imagen_5.jpg");
+                pub.setImagen6("imagen_6.jpg");
+                pub.setImagen7("imagen_7.jpg");
+                pub.setImagen8("imagen_8.jpg");
+                pub.setImagen9("imagen_9.jpg");
 
                 publicacionRepository.save(pub);
             }
+        }
             if (favoritosRepository.count() == 0 && !usuarios.isEmpty() && !publicaciones.isEmpty()) {
                 System.out.println("Creando favoritos...");
                 for (int i = 0; i < 10; i++) {

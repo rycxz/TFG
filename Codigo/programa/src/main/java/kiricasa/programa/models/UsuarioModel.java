@@ -27,7 +27,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import kiricasa.programa.roles.UsuarioRol;
+import kiricasa.programa.enums.UsuarioRol;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

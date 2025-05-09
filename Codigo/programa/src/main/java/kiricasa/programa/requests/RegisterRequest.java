@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import kiricasa.programa.roles.UsuarioRol;
+import kiricasa.programa.enums.UsuarioRol;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

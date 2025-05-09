@@ -11,12 +11,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import kiricasa.programa.enums.UsuarioRol;
 import kiricasa.programa.models.UsuarioModel;
 import kiricasa.programa.repository.UsuarioRepository;
 import kiricasa.programa.requests.LoginRequest;
 import kiricasa.programa.requests.RegisterRequest;
 import kiricasa.programa.response.AuthReponse;
-import kiricasa.programa.roles.UsuarioRol;
 import lombok.RequiredArgsConstructor;
 
 @Service

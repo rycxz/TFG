@@ -39,7 +39,7 @@
 .barrios-filtro {
     display: flex;
     justify-content: center;
-    gap: 5rem;
+    gap: 2rem;
     padding: 1rem 2rem;
     background-color: white;
     border-top: 2px solid #eee;

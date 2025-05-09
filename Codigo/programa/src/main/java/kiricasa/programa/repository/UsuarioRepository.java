@@ -6,8 +6,8 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import kiricasa.programa.enums.UsuarioRol;
 import kiricasa.programa.models.UsuarioModel;
-import kiricasa.programa.roles.UsuarioRol;
 
 public interface UsuarioRepository extends JpaRepository<UsuarioModel, Long> {
 
