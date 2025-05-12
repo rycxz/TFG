@@ -19,7 +19,7 @@
     <th:block th:if="${usuario != null and usuario.rol.name() == 'ADMIN'}">
         <link rel="stylesheet" th:href="@{/css/headers/estilosAdmin.css}">
     </th:block>
-    <link rel="stylesheet" th:href="@{/css/estilosHome.css}">
+    <link rel="stylesheet" th:href="@{/css/estilosPublicacion.css}">
     <link rel="stylesheet" th:href="@{/css/footer/estilosFooter.css}">
 
 </head>
@@ -36,9 +36,104 @@
         <div th:replace="fragmentos/header :: header_admin(${usuario.nombre})"></div>
     </div>
 
-<br><br><br><br><br><br><br><br><br><br><br><br>
-hola
+<section class="carousel">
+    <div class="carousel-container">
+        <img id="carousel-image" th:src="@{/images/pisos_auto/{img}(img=${fotos[0]})}" alt="Foto del piso">
+        <button class="prev" id="prev">&#10094;</button>
+        <button class="next" id="next">&#10095;</button>
+    </div>
+</section>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    fotos = [[${fotos}]];
+fotos = fotos.map(foto => `/images/pisos_auto/${foto}`);
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const imageElement = document.getElementById('carousel-image');
+        const prevBtn = document.getElementById('prev');
+        const nextBtn = document.getElementById('next');
+        let currentIndex = 0;
+
+        function updateImage() {
+            imageElement.src = fotos[currentIndex];
+        }
+
+        prevBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + fotos.length) % fotos.length;
+            updateImage();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % fotos.length;
+            updateImage();
+        });
+
+        if (fotos.length <= 1) {
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+        }
+    });
+    /*]]>*/
+</script>
+
+
+
+<!-- Título -->
+<h1 class="titulo" th:text="${publicacion.titulo}">Título del piso</h1>
+
+<!-- Contenido -->
+<section class="detalle-contenido">
+    <div class="info">
+        <p><strong>Tipo:</strong> <span th:text="${publicacion.tipo}"></span></p>
+        <p><strong>Precio:</strong> <span th:text="${publicacion.precio}"></span></p>
+        <p><strong>Ubicación:</strong> <span th:text="${publicacion.ubicacion}"></span></p>
+        <p><strong>Barrio:</strong> <span th:text="${nombreBarrio}">Nombre del barrio</span></p> <!-- ✅ NUEVO -->
+        <p><strong>Habitaciones:</strong> <span th:text="${publicacion.habitaciones}"></span></p>
+        <p><strong>Metros cuadrados:</strong> <span th:text="${publicacion.metrosCuadrados}"></span></p>
+        <p><strong>Descripción:</strong></p>
+        <p th:text="${publicacion.descripcion}">Descripción del piso.</p>
+    </div>
+<br>
+<div class="contacto">
+    <p>Contacta con el anunciante</p>
+    <textarea id="mensaje" placeholder="Escribe tu mensaje..." required></textarea>
+    <a th:href="'mailto:' + ${publicacion.usuario.email}"
+       id="enviarCorreo"
+       class="btn-accion"
+       onclick="prepararCorreo(event)">Enviar mensaje</a>
+</div>
+
+<script>
+    function prepararCorreo(event) {
+        const mensaje = document.getElementById('mensaje').value;
+        const enlace = document.getElementById('enviarCorreo');
+        const email = enlace.getAttribute('href').replace('mailto:', '');
+        enlace.setAttribute('href', `mailto:${email}?subject=Consulta%20sobre%20anuncio&body=${encodeURIComponent(mensaje)}`);
+
+    }
+</script>
+
+
+<div class="botones-acciones" th:if="${puedeGestionar}">
+    <a th:href="@{'/publicacion/editar/' + ${publicacion.id}}" class="btn-accion">Modificar anuncio</a>
+    <a th:href="@{'/publicacion/eliminar/' + ${publicacion.id}}" class="btn-accion eliminar">Eliminar anuncio</a>
+</div>
+
+<div th:if="${puedeAñadirFavoritos}">
+    <form action="/favoritos/añadir" method="post">
+        <input type="hidden" name="publicacionId" th:value="${publicacion.id}" />
+      <button class="boton-favorito">❤️ Añadir a Favoritos</button>
+
+    </form>
+</div>
+
+
+
+
     <div th:replace="fragmentos/footer :: footer"></div>
+
 
 
 

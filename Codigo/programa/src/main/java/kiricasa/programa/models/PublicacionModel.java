@@ -6,6 +6,7 @@
 package kiricasa.programa.models;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -25,6 +26,7 @@ import kiricasa.programa.enums.TipoPiso;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  *
@@ -77,10 +79,12 @@ public class PublicacionModel {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", nullable = false)
+ @ToString.Exclude
     private UsuarioModel usuario;
     //esto aplica igual que para lo de arriba
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_barrio", nullable = false)
+     @ToString.Exclude
     private BarriosModel barrio;
     @Transient
     private String imagenAleatoria;
@@ -91,6 +95,14 @@ public class PublicacionModel {
 
     public void setImagenAleatoria(String imagenAleatoria) {
         this.imagenAleatoria = imagenAleatoria;
+    }
+
+    public List<String> getFotos() {
+        // Devuelve una lista con todas las fotos de la publicación
+        List<String> fotos = List.of(imagen, imagen2, imagen3, imagen4, imagen5, imagen6, imagen7, imagen8, imagen9);
+        return fotos.stream()
+                .filter(foto -> foto != null && !foto.isEmpty())
+                .toList();
     }
 
 

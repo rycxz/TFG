@@ -32,6 +32,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  *
@@ -65,6 +66,7 @@ public class UsuarioModel implements UserDetails {
     @Column(name="recibir_noti",nullable = false)
         private boolean recibirNotificaciones;
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+     @ToString.Exclude
     private List<PublicacionModel> anuncios;
 
 
