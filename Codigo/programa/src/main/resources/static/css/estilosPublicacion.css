@@ -27,12 +27,12 @@ body {
     display: block;
 }
 
-
 .carousel-slide img {
     width: 100%;
     height: 400px;
     object-fit: cover;
 }
+
 .prev, .next {
     position: absolute;
     top: 80%;
@@ -60,6 +60,7 @@ body {
 .next {
     right: 10%;
 }
+
 .botones-acciones {
     text-align: center;
     margin: 20px 0;
@@ -89,7 +90,6 @@ body {
     background-color: #5a0000;
 }
 
-
 /* Título */
 .titulo {
     text-align: center;
@@ -106,7 +106,7 @@ body {
     justify-content: center;
     gap: 20px;
     padding: 20px;
-        margin-bottom: 5%;
+    margin-bottom: 5%;
 }
 
 .info, .contacto {
@@ -145,18 +145,49 @@ body {
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
-
 }
 
 .contacto button:hover {
     background-color: #a83227;
 }
 
-/* Responsive */
+/* Estilo para los botones de favoritos */
+.boton-favorito {
+    background-color: #dc3545; /* verde para añadir */
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.boton-favorito.eliminar {
+    background-color: #dc3545; /* rojo para eliminar */
+}
+
+.boton-favorito:hover {
+    background-color: #e06d79; /* verde más oscuro */
+    transform: scale(1.05);
+}
+
+.boton-favorito.eliminar:hover {
+    background-color: #c82333; /* rojo más oscuro */
+}
+
+.boton-favorito:active {
+    transform: scale(0.95);
+}
+
+/* Responsive mejorado */
 @media (max-width: 768px) {
     .detalle-contenido {
         flex-direction: column;
         align-items: center;
+        gap: 10px;
+        padding: 10px;
     }
 
     .carousel-slide img {
@@ -164,6 +195,17 @@ body {
     }
 
     .info, .contacto {
-        width: 90%;
+        width: 95%;
+        padding: 15px;
+    }
+
+    .btn-accion, .boton-favorito {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+
+    .contacto button {
+        padding: 8px 16px;
+        font-size: 14px;
     }
 }

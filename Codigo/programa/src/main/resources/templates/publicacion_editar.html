@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Kiricasa</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800&family=Cabin+Rounded&display=swap" rel="stylesheet">
+    <link rel="icon" href="/images/elementos/sinfondo.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+        <!-- Carga condicional de estilos -->
+    <th:block th:if="${usuario == null}">
+        <link rel="stylesheet" th:href="@{/css/headers/estilosHeaderNoLogged.css}">
+    </th:block>
+    <th:block th:if="${usuario != null and usuario.rol.name() == 'USER'}">
+        <link rel="stylesheet" th:href="@{/css/headers/estilosHeaderLogged.css}">
+    </th:block>
+    <th:block th:if="${usuario != null and usuario.rol.name() == 'ADMIN'}">
+        <link rel="stylesheet" th:href="@{/css/headers/estilosAdmin.css}">
+    </th:block>
+    <link rel="stylesheet" th:href="@{/css/estilosPublicacion.css}">
+    <link rel="stylesheet" th:href="@{/css/footer/estilosFooter.css}">
+
+</head>
+<body>
+        <!-- Header según usuario -->
+    <div th:if="${usuario == null}">
+        <div th:replace="fragmentos/header :: header_nologged"></div>
+    </div>
+    <div th:if="${usuario != null and usuario.rol.name() == 'USER'}">
+        <div th:replace="fragmentos/header :: header_user(${usuario.nombre})"></div>
+    </div>
+    <div th:if="${usuario != null and usuario.rol.name() == 'ADMIN'}">
+        <div th:replace="fragmentos/header :: header_admin(${usuario.nombre})"></div>
+    </div>
+    <h1>Editar Publicación</h1>
+
+    <!-- FORMULARIO -->
+    <form th:action="@{'/publicacion/editar/' + ${publicacion.id}}" method="post">
+        <input type="hidden" th:value="${publicacion.id}" name="id" />
+
+        <label>Título:</label><br/>
+        <input type="text" name="titulo" th:value="${publicacion.titulo}" required /><br/><br/>
+
+        <label>Descripción:</label><br/>
+        <textarea name="descripcion" required th:text="${publicacion.descripcion}"></textarea><br/><br/>
+
+        <label>Precio:</label><br/>
+        <input type="number" name="precio" step="0.01" min="0" th:value="${publicacion.precio}" required /><br/><br/>
+
+    <label>Barrio:</label>
+<select name="barrioId">
+    <option th:each="barrio : ${barrios}"
+            th:value="${barrio.id}"
+            th:selected="${barrio.id == publicacion.barrio.id}"
+            th:text="${barrio.nombre}">
+    </option>
+</select><br/>
+    </form>
+      <div th:replace="fragmentos/footer :: footer"></div>
+
+
+</body></html>

@@ -16,9 +16,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
 import kiricasa.programa.enums.UsuarioRol;
+import kiricasa.programa.models.FavoritosModel;
 import kiricasa.programa.models.PublicacionModel;
 import kiricasa.programa.models.UsuarioModel;
 import kiricasa.programa.repository.BarriosRepository;
+import kiricasa.programa.repository.FavoritosRepository;
 import kiricasa.programa.repository.PublicacionRepository;
 import lombok.AllArgsConstructor;
 
@@ -32,6 +34,7 @@ import lombok.AllArgsConstructor;
 public class PublicacionController {
     private final PublicacionRepository publicacionRepository;
         private final BarriosRepository barriosRepository;
+          private final FavoritosRepository favoritosRepository;
 
 @GetMapping("/detalle")
 public String verDetalle(@RequestParam("id") Long id, Model model, RedirectAttributes redirectAttributes, HttpSession session) {
@@ -43,40 +46,37 @@ public String verDetalle(@RequestParam("id") Long id, Model model, RedirectAttri
     if (usuario == null || token == null) {
         return "redirect:/nl/home";
     }
-
-    model.addAttribute("usuario", usuario);
-
     if (publicacion == null) {
         redirectAttributes.addFlashAttribute("error", "Ha ocurrido un error: el anuncio no existe.");
-
         return "redirect:/home";
     }
     //sacar ula lista con todas las fotos de la publicacion
     List<String> fotos = publicacion.getFotos();
-    model.addAttribute("fotos", fotos);
-    model.addAttribute("publicacion", publicacion);
-
-
-  boolean puedeGestionar = false;
+        boolean puedeGestionar = false;
         UsuarioModel usuario1 = (UsuarioModel) session.getAttribute("usuario");
             Long idBarrio = publicacion.getBarrio().getId();
 
             String nombreBarrio = barriosRepository.findNombreById(idBarrio)
-                      .orElse("Barrio desconocido");
+                    .orElse("Barrio desconocido");
         if (usuario1 != null) {
             puedeGestionar = usuario1.getRol() == UsuarioRol.ADMIN
                 || publicacion.getUsuario().getId().equals(usuario1.getId());
         }
-        boolean puedeAñadirFavoritos = false;
-        if (usuario1 != null && !publicacion.getUsuario().getId().equals(usuario1.getId())) {
-            puedeAñadirFavoritos = true;
+
+        boolean enFavoritos = false;
+
+                FavoritosModel favorito = favoritosRepository.findByUsuarioAndPublicacion(usuario1, publicacion).orElse(null);
+        if (usuario1 != null && !usuario1.getId().equals(publicacion.getUsuario().getId())) {
+            enFavoritos = favoritosRepository.findByUsuarioAndPublicacion(usuario1, publicacion).isPresent();
         }
 
-model.addAttribute("puedeAñadirFavoritos", puedeAñadirFavoritos);
-
-
-model.addAttribute("puedeGestionar", puedeGestionar);
-model.addAttribute("nombreBarrio", nombreBarrio);
+    model.addAttribute("enFavoritos", enFavoritos);
+    model.addAttribute("fotos", fotos);
+    model.addAttribute("publicacion", publicacion);
+    model.addAttribute("usuario", usuario);
+    model.addAttribute("puedeGestionar", puedeGestionar);
+    model.addAttribute("nombreBarrio", nombreBarrio);
+    model.addAttribute("favorito", favorito);
 
     return "publicacion"; // tu plantilla detalle.html
 }

@@ -89,7 +89,7 @@ fotos = fotos.map(foto => `/images/pisos_auto/${foto}`);
         <p><strong>Tipo:</strong> <span th:text="${publicacion.tipo}"></span></p>
         <p><strong>Precio:</strong> <span th:text="${publicacion.precio}"></span></p>
         <p><strong>Ubicación:</strong> <span th:text="${publicacion.ubicacion}"></span></p>
-        <p><strong>Barrio:</strong> <span th:text="${nombreBarrio}">Nombre del barrio</span></p> <!-- ✅ NUEVO -->
+        <p><strong>Barrio:</strong> <span th:text="${nombreBarrio}">Nombre del barrio</span></p>
         <p><strong>Habitaciones:</strong> <span th:text="${publicacion.habitaciones}"></span></p>
         <p><strong>Metros cuadrados:</strong> <span th:text="${publicacion.metrosCuadrados}"></span></p>
         <p><strong>Descripción:</strong></p>
@@ -121,17 +121,16 @@ fotos = fotos.map(foto => `/images/pisos_auto/${foto}`);
     <a th:href="@{'/publicacion/eliminar/' + ${publicacion.id}}" class="btn-accion eliminar">Eliminar anuncio</a>
 </div>
 
-<div th:if="${puedeAñadirFavoritos}">
-    <form action="/favoritos/añadir" method="post">
+<div th:if="${usuario != null and usuario.id != publicacion.usuario.id}">
+    <form th:action="@{${enFavoritos} ? '/favoritos/eliminar' : '/favoritos/añadir'}" method="post">
         <input type="hidden" name="publicacionId" th:value="${publicacion.id}" />
-      <button class="boton-favorito">❤️ Añadir a Favoritos</button>
-
+        <button class="boton-favorito" type="submit">
+            <span th:text="${enFavoritos} ? '❌ Quitar de Favoritos' : '❤️ Añadir a Favoritos'"></span>
+        </button>
     </form>
 </div>
-
-
-
-
+<br>
+</section>
     <div th:replace="fragmentos/footer :: footer"></div>
 
 
