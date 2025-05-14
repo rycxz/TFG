@@ -52,7 +52,8 @@
             <form th:action="@{/detalle}" method="get">
                 <input type="hidden" name="id" th:value="${publicacion.id}" />
                 <button type="submit" class="anuncio-button">
-                    <img th:src="@{/images/pisos_auto/{img}(img=${publicacion.imagenAleatoria})}" alt="Imagen aleatoria">
+  <img th:src="@{'/uploads/publicaciones/' + ${publicacion.carpeta} + '/' + ${publicacion.imagenAleatoria}}" alt="Imagen anuncio">
+
 
                     <h3 th:text="${publicacion.ubicacion} + ' - ' + ${publicacion.precio}">Ubicación + Precio</h3>
 

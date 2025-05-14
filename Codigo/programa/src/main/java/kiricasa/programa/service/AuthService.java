@@ -66,6 +66,7 @@ public class AuthService {
               .password(passwordEncoder.encode(request.getPassword()))
               .email(request.getEmail())
               .numero(request.getNumero())
+              .foto(null)
               .esAdmin(false)
               .fechaNacimiento(request.getFechaNacimiento())
               .fechaRegistro(LocalDateTime.now())

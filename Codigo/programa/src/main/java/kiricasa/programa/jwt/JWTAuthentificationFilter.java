@@ -36,51 +36,59 @@ public class JWTAuthentificationFilter  extends OncePerRequestFilter{
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
-    @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request,
-                                    @NonNull HttpServletResponse response,
-                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
+@Override
+protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                @NonNull HttpServletResponse response,
+                                @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        String path = request.getServletPath();
-        System.out.println("Filtro ejecutado para ruta: " + path);
+    String path = request.getServletPath();
+    System.out.println("Filtro ejecutado para ruta: " + path);
 
-        // Permitir rutas públicas sin autenticación
-        if (path.startsWith("/auth") || path.startsWith("/css") || path.startsWith("/js") ||
-            path.startsWith("/images") || path.endsWith(".html")||path.startsWith("/nl")) {
-            filterChain.doFilter(request, response);
-            return;
+    if (path.startsWith("/auth") || path.startsWith("/css") || path.startsWith("/js") ||
+        path.startsWith("/images") || path.endsWith(".html") || path.startsWith("/nl") ||
+        path.startsWith("/uploads")) {
+        filterChain.doFilter(request, response);
+        return;
+    }
+
+    String token = getTokenFromRequest(request);
+
+    if (token == null) {
+        Object sessionToken = request.getSession(false) != null
+                ? request.getSession().getAttribute("jwt")
+                : null;
+        if (sessionToken instanceof String) {
+            token = (String) sessionToken;
         }
-        //saca el token del header Authorization
-        String token = getTokenFromRequest(request);
+    }
 
-        // si no lo encuentra en el header lo busca en la session
-        if (token == null) {
-            Object sessionToken = request.getSession(false) != null
-                    ? request.getSession().getAttribute("jwt")
-                    : null;
-            if (sessionToken instanceof String) {
-                //guardo el token en la variable token
-                token = (String) sessionToken;
-            }
-        }
-        //si el token no es nulo y no hay autenticacion en el contexto de seguridad
-        //busca el nombre de usuario en el token y lo carga en el contexto de seguridad
+    try {
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            String username = jwtService.getUsernameFromToken(token);
+            String username = jwtService.getUsernameFromToken(token);  // ⬅️ aquí puede saltar ExpiredJwtException
             if (username != null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 if (jwtService.isTokenValid(token, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
         }
-
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(request, response);   // sigue la cadena si todo va bien
+    } catch (io.jsonwebtoken.ExpiredJwtException e) {
+        System.out.println("Token expirado. Redirigiendo a login.");
+        request.getSession().removeAttribute("jwt");
+         request.getSession().invalidate();  //
+        response.sendRedirect("/auth/login");
+    } catch (Exception e) {
+        System.out.println("Token inválido o error: " + e.getMessage());
+        request.getSession().removeAttribute("jwt");
+         request.getSession().invalidate();  //
+        response.sendRedirect("/auth/login");
     }
+}
+
 
     private String getTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);

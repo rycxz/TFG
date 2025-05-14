@@ -38,7 +38,11 @@
 
 <section class="carousel">
     <div class="carousel-container">
-        <img id="carousel-image" th:src="@{/images/pisos_auto/{img}(img=${fotos[0]})}" alt="Foto del piso">
+<img id="carousel-image"
+     th:src="@{'/uploads/publicaciones/' + ${publicacion.carpeta} + '/' + ${fotos[0]}}"
+     alt="Foto del piso">
+
+
         <button class="prev" id="prev">&#10094;</button>
         <button class="next" id="next">&#10095;</button>
     </div>
@@ -46,9 +50,10 @@
 
 <script th:inline="javascript">
     /*<![CDATA[*/
-    fotos = [[${fotos}]];
-fotos = fotos.map(foto => `/images/pisos_auto/${foto}`);
+    let fotos = [[${fotos}]];
+    let carpeta = [[${publicacion.carpeta}]];
 
+    fotos = fotos.map(foto => `/uploads/publicaciones/${carpeta}/${foto}`);
 
     document.addEventListener('DOMContentLoaded', function () {
         const imageElement = document.getElementById('carousel-image');
@@ -80,6 +85,7 @@ fotos = fotos.map(foto => `/images/pisos_auto/${foto}`);
 
 
 
+
 <!-- Título -->
 <h1 class="titulo" th:text="${publicacion.titulo}">Título del piso</h1>
 
@@ -99,10 +105,7 @@ fotos = fotos.map(foto => `/images/pisos_auto/${foto}`);
 <div class="contacto">
     <p>Contacta con el anunciante</p>
     <textarea id="mensaje" placeholder="Escribe tu mensaje..." required></textarea>
-    <a th:href="'mailto:' + ${publicacion.usuario.email}"
-       id="enviarCorreo"
-       class="btn-accion"
-       onclick="prepararCorreo(event)">Enviar mensaje</a>
+    <a th:href="'mailto:' + ${publicacion.usuario.email}"id="enviarCorreo" class="btn-accion" onclick="prepararCorreo(event)">Enviar mensaje</a>
 </div>
 
 <script>
@@ -114,13 +117,6 @@ fotos = fotos.map(foto => `/images/pisos_auto/${foto}`);
 
     }
 </script>
-
-
-<div class="botones-acciones" th:if="${puedeGestionar}">
-    <a th:href="@{'/publicacion/editar/' + ${publicacion.id}}" class="btn-accion">Modificar anuncio</a>
-    <a th:href="@{'/publicacion/eliminar/' + ${publicacion.id}}" class="btn-accion eliminar">Eliminar anuncio</a>
-</div>
-
 <div th:if="${usuario != null and usuario.id != publicacion.usuario.id}">
     <form th:action="@{${enFavoritos} ? '/favoritos/eliminar' : '/favoritos/añadir'}" method="post">
         <input type="hidden" name="publicacionId" th:value="${publicacion.id}" />
@@ -129,6 +125,14 @@ fotos = fotos.map(foto => `/images/pisos_auto/${foto}`);
         </button>
     </form>
 </div>
+<br>
+
+<div class="botones-acciones" th:if="${puedeGestionar}">
+    <a th:href="@{'/publicacion/editar/' + ${publicacion.id}}" class="btn-accion">Modificar anuncio</a>
+    <a th:href="@{'/publicacion/eliminar/' + ${publicacion.id}}" class="btn-accion eliminar">Eliminar anuncio</a>
+</div>
+
+
 <br>
 </section>
     <div th:replace="fragmentos/footer :: footer"></div>

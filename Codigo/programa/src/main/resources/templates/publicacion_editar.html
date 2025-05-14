@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Kiricasa</title>
-
+    <title>Kiricasa - Editar Publicación</title>
+    <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800&family=Cabin+Rounded&display=swap" rel="stylesheet">
     <link rel="icon" href="/images/elementos/sinfondo.ico" type="image/x-icon">
-    <meta charset="UTF-8">
-        <!-- Carga condicional de estilos -->
+
+    <!-- Estilos -->
     <th:block th:if="${usuario == null}">
         <link rel="stylesheet" th:href="@{/css/headers/estilosHeaderNoLogged.css}">
     </th:block>
@@ -18,10 +18,10 @@
     </th:block>
     <link rel="stylesheet" th:href="@{/css/estilosPublicacion.css}">
     <link rel="stylesheet" th:href="@{/css/footer/estilosFooter.css}">
-
 </head>
+
 <body>
-        <!-- Header según usuario -->
+    <!-- Header -->
     <div th:if="${usuario == null}">
         <div th:replace="fragmentos/header :: header_nologged"></div>
     </div>
@@ -31,31 +31,91 @@
     <div th:if="${usuario != null and usuario.rol.name() == 'ADMIN'}">
         <div th:replace="fragmentos/header :: header_admin(${usuario.nombre})"></div>
     </div>
-    <h1>Editar Publicación</h1>
+
+    <h1 style="text-align:center;">Editar Publicación</h1>
+
+    <!-- Galería de imágenes -->
+  <h2 style="text-align: center;">Galería de imágenes</h2>
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; justify-items: center;">
+    <div th:each="img, iterStat : ${publicacion.listaImagenes}"
+         style="position: relative; width: 150px; height: 150px;">
+
+        <!-- Mostrar imagen o predeterminada -->
+        <img th:src="${img != null} ? '/uploads/publicaciones/' + ${publicacion.carpeta} + '/' + ${img} : '/images/elementos/predeterminada.png'"
+             alt="Imagen anuncio"
+             style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px; border: 1px solid #ccc;">
+
+        <!-- Botón eliminar (solo si hay imagen) -->
+        <a th:if="${img != null and img != ''}"
+           th:href="@{'/publicacion/editar/' + ${publicacion.id} + '/eliminar-imagen?imagen=' + ${img}}"
+           style="position: absolute; top: 5px; left: 5px; background-color: rgba(255, 71, 87, 0.9); color: white; text-decoration: none; font-weight: bold; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+            ✖
+        </a>
+
+        <!-- Badge "Principal" solo para imagen_0 -->
+        <div th:if="${iterStat.index == 0}"
+             style="position: absolute; top: 5px; right: 5px; background-color: #ff4757; color: white; padding: 2px 6px; border-radius: 12px; font-size: 12px;">
+            Principal
+        </div>
+    </div>
+</div>
+
 
     <!-- FORMULARIO -->
-    <form th:action="@{'/publicacion/editar/' + ${publicacion.id}}" method="post">
-        <input type="hidden" th:value="${publicacion.id}" name="id" />
+    <form th:action="@{'/publicacion/editar/' + ${publicacion.id}}" method="post" enctype="multipart/form-data"
+          style="max-width: 600px; margin: 30px auto; display: flex; flex-direction: column; gap: 10px;">
 
-        <label>Título:</label><br/>
-        <input type="text" name="titulo" th:value="${publicacion.titulo}" required /><br/><br/>
+        <input type="hidden" name="id" th:value="${publicacion.id}" />
 
-        <label>Descripción:</label><br/>
-        <textarea name="descripcion" required th:text="${publicacion.descripcion}"></textarea><br/><br/>
+        <label>Título:</label>
+        <input type="text" name="titulo" th:value="${publicacion.titulo}" required />
 
-        <label>Precio:</label><br/>
-        <input type="number" name="precio" step="0.01" min="0" th:value="${publicacion.precio}" required /><br/><br/>
+        <label>Descripción:</label>
+        <textarea name="descripcion" rows="4" required th:text="${publicacion.descripcion}"></textarea>
 
-    <label>Barrio:</label>
-<select name="barrioId">
-    <option th:each="barrio : ${barrios}"
-            th:value="${barrio.id}"
-            th:selected="${barrio.id == publicacion.barrio.id}"
-            th:text="${barrio.nombre}">
-    </option>
-</select><br/>
+        <label>Precio:</label>
+        <input type="text" name="precio" th:value="${publicacion.precio}" required />
+
+        <label>Estado:</label>
+        <input type="text" name="estado" th:value="${publicacion.estado}" />
+
+        <label>Tipo de Piso:</label>
+        <select name="tipo">
+            <option th:each="tipo : ${T(kiricasa.programa.enums.TipoPiso).values()}"
+                    th:value="${tipo}"
+                    th:selected="${tipo} == ${publicacion.tipo}"
+                    th:text="${tipo}"></option>
+        </select>
+
+        <label>Ubicación:</label>
+        <input type="text" name="ubicacion" th:value="${publicacion.ubicacion}" />
+
+        <label>Metros cuadrados:</label>
+        <input type="number" name="metrosCuadrados" th:value="${publicacion.metrosCuadrados}" min="0" />
+
+        <label>Habitaciones:</label>
+        <input type="text" name="habitaciones" th:value="${publicacion.habitaciones}" />
+
+        <label>Permite mascotas:</label>
+        <input type="checkbox" name="permiteMascotas" th:checked="${publicacion.permiteMascotas}" />
+
+        <label>Número de compañeros:</label>
+        <input type="number" name="numeroCompañeros" th:value="${publicacion.numeroCompañeros}" min="0" />
+
+        <label>Barrio:</label>
+        <select name="barrioId">
+            <option th:each="barrio : ${barrios}"
+                    th:value="${barrio.id}"
+                    th:selected="${barrio.id == publicacion.barrio.id}"
+                    th:text="${barrio.nombre}"></option>
+        </select>
+
+        <button type="submit" style="padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            Guardar cambios
+        </button>
     </form>
-      <div th:replace="fragmentos/footer :: footer"></div>
 
-
-</body></html>
+    <!-- Footer -->
+    <div th:replace="fragmentos/footer :: footer"></div>
+</body>
+</html>

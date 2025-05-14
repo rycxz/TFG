@@ -6,6 +6,7 @@
 package kiricasa.programa.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,46 +40,55 @@ public class PublicacionController {
 @GetMapping("/detalle")
 public String verDetalle(@RequestParam("id") Long id, Model model, RedirectAttributes redirectAttributes, HttpSession session) {
 
-    // Aquí buscas el anuncio por ID y lo pasas al modelo
     PublicacionModel publicacion = publicacionRepository.findById(id).orElse(null);
     String token = (String) session.getAttribute("jwt");
-    Object usuario = session.getAttribute("usuario");
-    if (usuario == null || token == null) {
+    UsuarioModel usuarioLogueado = (UsuarioModel) session.getAttribute("usuario");
+
+    if (usuarioLogueado == null || token == null) {
         return "redirect:/nl/home";
     }
+
     if (publicacion == null) {
         redirectAttributes.addFlashAttribute("error", "Ha ocurrido un error: el anuncio no existe.");
         return "redirect:/home";
     }
-    //sacar ula lista con todas las fotos de la publicacion
+
+    // ✅ Seguridad extrema
     List<String> fotos = publicacion.getFotos();
-        boolean puedeGestionar = false;
-        UsuarioModel usuario1 = (UsuarioModel) session.getAttribute("usuario");
-            Long idBarrio = publicacion.getBarrio().getId();
+    if (fotos == null || fotos.isEmpty()) {
+        fotos = List.of("predeterminada.png");
+    }
 
-            String nombreBarrio = barriosRepository.findNombreById(idBarrio)
-                    .orElse("Barrio desconocido");
-        if (usuario1 != null) {
-            puedeGestionar = usuario1.getRol() == UsuarioRol.ADMIN
-                || publicacion.getUsuario().getId().equals(usuario1.getId());
-        }
+    // ✅ Protejo si publicacion.getUsuario() es null
+    UsuarioModel propietario = publicacion.getUsuario();
+    boolean puedeGestionar = false;
+    if (propietario != null && usuarioLogueado != null) {
+        puedeGestionar = usuarioLogueado.getRol() == UsuarioRol.ADMIN
+                || propietario.getId().equals(usuarioLogueado.getId());
+    }
 
-        boolean enFavoritos = false;
+    // ✅ Protejo si publicacion.getBarrio() es null
+    String nombreBarrio = Optional.ofNullable(publicacion.getBarrio())
+            .flatMap(b -> barriosRepository.findNombreById(b.getId()))
+            .orElse("Barrio desconocido");
 
-                FavoritosModel favorito = favoritosRepository.findByUsuarioAndPublicacion(usuario1, publicacion).orElse(null);
-        if (usuario1 != null && !usuario1.getId().equals(publicacion.getUsuario().getId())) {
-            enFavoritos = favoritosRepository.findByUsuarioAndPublicacion(usuario1, publicacion).isPresent();
-        }
+    boolean enFavoritos = false;
+    FavoritosModel favorito = null;
+    if (propietario != null && usuarioLogueado != null
+        && !usuarioLogueado.getId().equals(propietario.getId())) {
+        favorito = favoritosRepository.findByUsuarioAndPublicacion(usuarioLogueado, publicacion).orElse(null);
+        enFavoritos = favorito != null;
+    }
 
     model.addAttribute("enFavoritos", enFavoritos);
+    model.addAttribute("favorito", favorito);
     model.addAttribute("fotos", fotos);
     model.addAttribute("publicacion", publicacion);
-    model.addAttribute("usuario", usuario);
+    model.addAttribute("usuario", usuarioLogueado);
     model.addAttribute("puedeGestionar", puedeGestionar);
     model.addAttribute("nombreBarrio", nombreBarrio);
-    model.addAttribute("favorito", favorito);
 
-    return "publicacion"; // tu plantilla detalle.html
+    return "publicacion";
 }
 
 

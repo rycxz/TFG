@@ -1,12 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
 package kiricasa.programa.models;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -28,10 +26,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-/**
- *
- * @author recur
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -39,14 +33,20 @@ import lombok.ToString;
 @Table(name = "publicaciones")
 public class PublicacionModel {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-        private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Column(nullable = false)
     private String titulo;
+
     @Column(nullable = false)
     private String descripcion;
+
     @CreationTimestamp
     private LocalDateTime fechaPublicacion;
+
+    private String carpeta = "publicacion_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyyHHmmss"));
+
     private String imagen;
     private String imagen2;
     private String imagen3;
@@ -56,36 +56,33 @@ public class PublicacionModel {
     private String imagen7;
     private String imagen8;
     private String imagen9;
+
     @Column(nullable = false)
     private String ubicacion;
+
     @Enumerated(EnumType.STRING)
     private TipoPiso tipo;
 
     private String precio;
     private String estado;
+
     @Column(nullable = false)
     private int metrosCuadrados;
+
     private String habitaciones;
     private boolean permiteMascotas;
     private int numeroCompañeros;
-       /*
-     * hay que tener algo en cuenta aqui
-     * antes cuando inicaliabas un anucnio hacias :
-     *  publicacion.setIdUsuario(buscabas el usuario por id);
-     *
-     * ahora hay que hacer:
-     * publicacion.setUsuario(usuarioRepository.findById(id).orElseThrow());
-     * esto es por que asi Spring Data JPA puede hacer joins automáticos yo antes lo hacia mal
-     */
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", nullable = false)
- @ToString.Exclude
+    @ToString.Exclude
     private UsuarioModel usuario;
-    //esto aplica igual que para lo de arriba
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_barrio", nullable = false)
-     @ToString.Exclude
+    @ToString.Exclude
     private BarriosModel barrio;
+
     @Transient
     private String imagenAleatoria;
 
@@ -97,13 +94,41 @@ public class PublicacionModel {
         this.imagenAleatoria = imagenAleatoria;
     }
 
-    public List<String> getFotos() {
-        // Devuelve una lista con todas las fotos de la publicación
-        List<String> fotos = List.of(imagen, imagen2, imagen3, imagen4, imagen5, imagen6, imagen7, imagen8, imagen9);
-        return fotos.stream()
-                .filter(foto -> foto != null && !foto.isEmpty())
-                .toList();
+    /**
+     * ✅ Devuelve exactamente las 9 posiciones, pero si alguna es null o vacía la reemplaza con "" (string vacío)
+     * Para evitar NullPointerException en las vistas
+     */
+    @Transient
+    public List<String> getListaImagenes() {
+        List<String> imagenes = new ArrayList<>();
+        imagenes.add(imagen != null ? imagen : "");
+        imagenes.add(imagen2 != null ? imagen2 : "");
+        imagenes.add(imagen3 != null ? imagen3 : "");
+        imagenes.add(imagen4 != null ? imagen4 : "");
+        imagenes.add(imagen5 != null ? imagen5 : "");
+        imagenes.add(imagen6 != null ? imagen6 : "");
+        imagenes.add(imagen7 != null ? imagen7 : "");
+        imagenes.add(imagen8 != null ? imagen8 : "");
+        imagenes.add(imagen9 != null ? imagen9 : "");
+        return imagenes;
     }
 
+    /**
+     * ✅ Devuelve solo las imágenes válidas (no nulas y no vacías)
+     */
+    @Transient
+    public List<String> getFotos() {
+        return List.of(imagen, imagen2, imagen3, imagen4, imagen5, imagen6, imagen7, imagen8, imagen9)
+                .stream()
+                .filter(f -> f != null && !f.isEmpty())
+                .collect(Collectors.toList());
+    }
 
+    public String getCarpetaImagen() {
+        return carpeta;
+    }
+
+    public void setCarpetaImagen(String carpetaImagen) {
+        this.carpeta = carpetaImagen;
+    }
 }

@@ -133,6 +133,7 @@ public class DataInitializer implements CommandLineRunner {
                 pub.setNumeroCompañeros(faker.number().numberBetween(0, 3));
                 pub.setUsuario(faker.options().nextElement(usuarios));
                 pub.setBarrio(faker.options().nextElement(barrios));
+                pub.setCarpeta("pisos_auto");  // carpeta donde están las imágenes fake
                 pub.setImagen("imagen_0.jpg");
                 pub.setImagen2("imagen_2.jpg");
                 pub.setImagen3("imagen_3.jpg");
