@@ -53,7 +53,11 @@
     let fotos = [[${fotos}]];
     let carpeta = [[${publicacion.carpeta}]];
 
-    fotos = fotos.map(foto => `/uploads/publicaciones/${carpeta}/${foto}`);
+ fotos = fotos.map(foto =>
+    foto === 'null'
+        ? `/uploads/publicaciones/default_folder/predeterminada.png`
+        : `/uploads/publicaciones/${carpeta}/${foto}`
+);
 
     document.addEventListener('DOMContentLoaded', function () {
         const imageElement = document.getElementById('carousel-image');

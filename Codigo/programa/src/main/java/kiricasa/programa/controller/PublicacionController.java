@@ -39,7 +39,7 @@ public class PublicacionController {
 
 @GetMapping("/detalle")
 public String verDetalle(@RequestParam("id") Long id, Model model, RedirectAttributes redirectAttributes, HttpSession session) {
-
+        System.out.println("Estoy en el controlador de detalle");
     PublicacionModel publicacion = publicacionRepository.findById(id).orElse(null);
     String token = (String) session.getAttribute("jwt");
     UsuarioModel usuarioLogueado = (UsuarioModel) session.getAttribute("usuario");
@@ -47,20 +47,25 @@ public String verDetalle(@RequestParam("id") Long id, Model model, RedirectAttri
     if (usuarioLogueado == null || token == null) {
         return "redirect:/nl/home";
     }
-
+    System.out.println("Usuario logueado: " + usuarioLogueado.getNombre());
     if (publicacion == null) {
         redirectAttributes.addFlashAttribute("error", "Ha ocurrido un error: el anuncio no existe.");
         return "redirect:/home";
     }
+    System.out.println("Publicacion: " + publicacion.getTitulo());
 
-    // ✅ Seguridad extrema
+
     List<String> fotos = publicacion.getFotos();
-    if (fotos == null || fotos.isEmpty()) {
-        fotos = List.of("predeterminada.png");
+    System.out.println("Fotos: " + fotos);
+    for (int i = 0; i < fotos.size(); i++) {
+        String foto = fotos.get(i);
+        System.out.println("Foto " + i + ": " + foto);
+
     }
 
-    // ✅ Protejo si publicacion.getUsuario() es null
+
     UsuarioModel propietario = publicacion.getUsuario();
+    System.out.println("Propietario: " + propietario.getNombre());
     boolean puedeGestionar = false;
     if (propietario != null && usuarioLogueado != null) {
         puedeGestionar = usuarioLogueado.getRol() == UsuarioRol.ADMIN
@@ -71,6 +76,7 @@ public String verDetalle(@RequestParam("id") Long id, Model model, RedirectAttri
     String nombreBarrio = Optional.ofNullable(publicacion.getBarrio())
             .flatMap(b -> barriosRepository.findNombreById(b.getId()))
             .orElse("Barrio desconocido");
+            System.out.println("Nombre barrio: " + nombreBarrio);
 
     boolean enFavoritos = false;
     FavoritosModel favorito = null;

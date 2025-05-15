@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -46,15 +45,23 @@ public class PublicacionModel {
     private LocalDateTime fechaPublicacion;
 
     private String carpeta = "publicacion_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyyHHmmss"));
-
+@Column(nullable = false)
     private String imagen;
+    @Column(nullable = false)
     private String imagen2;
+    @Column(nullable = false)
     private String imagen3;
+    @Column(nullable = false)
     private String imagen4;
+    @Column(nullable = false)
     private String imagen5;
+    @Column(nullable = false)
     private String imagen6;
+    @Column(nullable = false)
     private String imagen7;
+    @Column(nullable = false)
     private String imagen8;
+    @Column(nullable = false)
     private String imagen9;
 
     @Column(nullable = false)
@@ -113,16 +120,23 @@ public class PublicacionModel {
         return imagenes;
     }
 
-    /**
-     * ✅ Devuelve solo las imágenes válidas (no nulas y no vacías)
-     */
-    @Transient
-    public List<String> getFotos() {
-        return List.of(imagen, imagen2, imagen3, imagen4, imagen5, imagen6, imagen7, imagen8, imagen9)
-                .stream()
-                .filter(f -> f != null && !f.isEmpty())
-                .collect(Collectors.toList());
+@Transient
+public List<String> getFotos() {
+    List<String> imagenesOriginales = List.of(imagen, imagen2, imagen3, imagen4, imagen5, imagen6, imagen7, imagen8, imagen9);
+
+    List<String> imagenes = new ArrayList<>();
+    for (String img : imagenesOriginales) {
+        if (img == null || img.isEmpty()) {
+            imagenes.add("predeterminada.png");
+        } else {
+            imagenes.add(img);
+        }
     }
+
+    return imagenes;
+}
+
+
 
     public String getCarpetaImagen() {
         return carpeta;

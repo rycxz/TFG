@@ -16,11 +16,12 @@
     <th:block th:if="${usuario != null and usuario.rol.name() == 'ADMIN'}">
         <link rel="stylesheet" th:href="@{/css/headers/estilosAdmin.css}">
     </th:block>
-    <link rel="stylesheet" th:href="@{/css/estilosPublicacion.css}">
+    <link rel="stylesheet" th:href="@{/css/estilosEditarPublicacion.css}">
     <link rel="stylesheet" th:href="@{/css/footer/estilosFooter.css}">
 </head>
 
-<body>
+<body id="editar-publicacion">
+
     <!-- Header -->
     <div th:if="${usuario == null}">
         <div th:replace="fragmentos/header :: header_nologged"></div>
@@ -32,29 +33,25 @@
         <div th:replace="fragmentos/header :: header_admin(${usuario.nombre})"></div>
     </div>
 
-    <h1 style="text-align:center;">Editar Publicación</h1>
+    <h1 class="titulo-editar">Editar Publicación</h1>
 
     <!-- Galería de imágenes -->
-  <h2 style="text-align: center;">Galería de imágenes</h2>
-<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; justify-items: center;">
-    <div th:each="img, iterStat : ${publicacion.listaImagenes}"
-         style="position: relative; width: 150px; height: 150px;">
+<h2 class="subtitulo-galeria">Galería de imágenes</h2>
+<div class="galeria-imagenes">
+    <div th:each="img, iterStat : ${publicacion.listaImagenes}" class="galeria-item">
 
         <!-- Mostrar imagen o predeterminada -->
-        <img th:src="${img != null} ? '/uploads/publicaciones/' + ${publicacion.carpeta} + '/' + ${img} : '/images/elementos/predeterminada.png'"
+        <img th:src="${img == 'null'} ? '/uploads/publicaciones/default_folder/predeterminada.png' : '/uploads/publicaciones/' + ${publicacion.carpeta} + '/' + ${img}"
              alt="Imagen anuncio"
-             style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px; border: 1px solid #ccc;">
+             class="imagen-anuncio">
 
-        <!-- Botón eliminar (solo si hay imagen) -->
-        <a th:if="${img != null and img != ''}"
+        <!-- Mostrar botón eliminar solo si NO es predeterminada -->
+        <a th:if="${img != 'null' and img != ''}"
            th:href="@{'/publicacion/editar/' + ${publicacion.id} + '/eliminar-imagen?imagen=' + ${img}}"
-           style="position: absolute; top: 5px; left: 5px; background-color: rgba(255, 71, 87, 0.9); color: white; text-decoration: none; font-weight: bold; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 14px;">
-            ✖
-        </a>
+           class="boton-eliminar">✖</a>
 
         <!-- Badge "Principal" solo para imagen_0 -->
-        <div th:if="${iterStat.index == 0}"
-             style="position: absolute; top: 5px; right: 5px; background-color: #ff4757; color: white; padding: 2px 6px; border-radius: 12px; font-size: 12px;">
+        <div th:if="${iterStat.index == 0}" class="badge-principal">
             Principal
         </div>
     </div>
@@ -63,8 +60,7 @@
 
     <!-- FORMULARIO -->
     <form th:action="@{'/publicacion/editar/' + ${publicacion.id}}" method="post" enctype="multipart/form-data"
-          style="max-width: 600px; margin: 30px auto; display: flex; flex-direction: column; gap: 10px;">
-
+          class="formulario-editar-publicacion">
         <input type="hidden" name="id" th:value="${publicacion.id}" />
 
         <label>Título:</label>
@@ -110,7 +106,7 @@
                     th:text="${barrio.nombre}"></option>
         </select>
 
-        <button type="submit" style="padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        <button type="submit" class="boton-guardar">
             Guardar cambios
         </button>
     </form>
