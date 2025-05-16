@@ -37,6 +37,14 @@ public class PublicacionController {
         private final BarriosRepository barriosRepository;
           private final FavoritosRepository favoritosRepository;
 
+          /**
+           * Método para mostrar el detalle de una publicación.
+           * @param id
+           * @param model
+           * @param redirectAttributes
+           * @param session
+           * @return
+           */
 @GetMapping("/detalle")
 public String verDetalle(@RequestParam("id") Long id, Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         System.out.println("Estoy en el controlador de detalle");
@@ -96,6 +104,7 @@ public String verDetalle(@RequestParam("id") Long id, Model model, RedirectAttri
 
     return "publicacion";
 }
+
 
 
 }

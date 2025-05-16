@@ -119,6 +119,23 @@ public class PublicacionModel {
         imagenes.add(imagen9 != null ? imagen9 : "");
         return imagenes;
     }
+public void setFotos(List<String> fotos) {
+    // Rellenar hasta 9 con cadenas vacías si no hay suficientes imágenes
+    while (fotos.size() < 9) {
+        fotos.add("");
+    }
+
+    // Asignar valores a los campos individuales
+    this.imagen = fotos.get(0);
+    this.imagen2 = fotos.get(1);
+    this.imagen3 = fotos.get(2);
+    this.imagen4 = fotos.get(3);
+    this.imagen5 = fotos.get(4);
+    this.imagen6 = fotos.get(5);
+    this.imagen7 = fotos.get(6);
+    this.imagen8 = fotos.get(7);
+    this.imagen9 = fotos.get(8);
+}
 
 @Transient
 public List<String> getFotos() {

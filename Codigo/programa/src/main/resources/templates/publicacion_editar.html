@@ -35,31 +35,53 @@
 
     <h1 class="titulo-editar">Editar Publicación</h1>
 
-    <!-- Galería de imágenes -->
+<!-- Galería de imágenes -->
 <h2 class="subtitulo-galeria">Galería de imágenes</h2>
 <div class="galeria-imagenes">
     <div th:each="img, iterStat : ${publicacion.listaImagenes}" class="galeria-item">
 
-        <!-- Mostrar imagen o predeterminada -->
-        <img th:src="${img == 'null'} ? '/uploads/publicaciones/default_folder/predeterminada.png' : '/uploads/publicaciones/' + ${publicacion.carpeta} + '/' + ${img}"
-             alt="Imagen anuncio"
+        <!-- Si la imagen es nula o vacía: mostrar predeterminada y permitir subir -->
+<form th:if="${img == null or img == 'null' or img == ''}"
+      th:action="@{'/publicacion/editar/' + ${publicacion.id} + '/subir-imagen'}"
+      method="post"
+      enctype="multipart/form-data">
+
+    <label style="cursor: pointer;">
+        <img src="/uploads/publicaciones/default_folder/predeterminada.png"
+             alt="Imagen predeterminada"
              class="imagen-anuncio">
 
-        <!-- Mostrar botón eliminar solo si NO es predeterminada -->
-        <a th:if="${img != 'null' and img != ''}"
-           th:href="@{'/publicacion/editar/' + ${publicacion.id} + '/eliminar-imagen?imagen=' + ${img}}"
-           class="boton-eliminar">✖</a>
+        <input type="file"
+               name="imagen"
+               accept="image/png, image/jpeg, image/jpg"
+               style="display: none;"
+               onchange="this.closest('form').submit()">
+    </label>
+</form>
+
+
+
+        <!-- Si la imagen existe, mostrarla normalmente con botón eliminar -->
+        <div th:if="${img != null and img != 'null' and img != ''}">
+            <img th:src="'/uploads/publicaciones/' + ${publicacion.carpeta} + '/' + ${img}"
+                 alt="Imagen anuncio"
+                 class="imagen-anuncio">
+
+            <a th:href="@{'/publicacion/editar/' + ${publicacion.id} + '/eliminar-imagen?imagen=' + ${img}}"
+               class="boton-eliminar">✖</a>
+        </div>
 
         <!-- Badge "Principal" solo para imagen_0 -->
         <div th:if="${iterStat.index == 0}" class="badge-principal">
             Principal
         </div>
+
     </div>
 </div>
 
 
     <!-- FORMULARIO -->
-    <form th:action="@{'/publicacion/editar/' + ${publicacion.id}}" method="post" enctype="multipart/form-data"
+    <form th:action="@{'/publicacion/editar/' + ${publicacion.id} + '/editarinfo'}" method="post" enctype="multipart/form-data"
           class="formulario-editar-publicacion">
         <input type="hidden" name="id" th:value="${publicacion.id}" />
 
