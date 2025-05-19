@@ -58,7 +58,7 @@ public String mostrarFormularioEdicion(@PathVariable("id") Long id, Model model,
     model.addAttribute("publicacion", publicacion);
     model.addAttribute("barrios", barriosRepository.findAll());
 
-    return "publicacion_editar"; // vista Thymeleaf
+    return "publicacion_editar"; // vista
 }
 
 /**
@@ -124,17 +124,17 @@ public String subirImagen(@PathVariable Long id,
         archivo.transferTo(ruta.toFile());
 
         // Actualizar primer hueco vacío
-        List<String> imagenes = new ArrayList<>(publicacion.getListaImagenes());
+        List<String> imagenes = new ArrayList<>(publicacion.getFotos());
         for (int i = 0; i < imagenes.size(); i++) {
             if (imagenes.get(i) == null || imagenes.get(i).isEmpty() || imagenes.get(i).equals("predeterminada.png")) {
                 imagenes.set(i, nombreArchivo);
-                break;
+                              break;
             }
         }
 
-        publicacion.setFotos(imagenes);
-        publicacionRepository.save(publicacion);
-        System.out.println("💾 Imagen registrada en base de datos");
+
+
+
 
         redirectAttributes.addFlashAttribute("success", "Imagen subida correctamente.");
 
@@ -147,19 +147,6 @@ public String subirImagen(@PathVariable Long id,
     return "redirect:/detalle?id=" + id;
 }
 
-
-/**
- * Método para eliminar una imagen de una publicación.
- *
- * @param id                 ID de la publicación.
- * @param nombre             Nombre de la imagen a eliminar.
- * @param redirectAttributes Atributos para redirección.
- * @return Redirección a la página de edición de la publicación.
- * * @param id
- * @param nombre
- * @param redirectAttributes
- * @return
- */
 @GetMapping("/editar/{id}/eliminar-imagen")
 public String eliminarImagen(@PathVariable Long id,
                              @RequestParam("imagen") String nombre,
@@ -171,22 +158,30 @@ public String eliminarImagen(@PathVariable Long id,
         return "redirect:/home";
     }
 
-    List<String> fotos = publicacion.getFotos();
-    if (fotos.remove(nombre)) {
-        publicacion.setFotos(fotos);
+    // Detectar la posición de la imagen en la lista original
+    List<String> imagenes = publicacion.getFotosOriginales();
+    int posicion = imagenes.indexOf(nombre);
+
+    if (posicion != -1) {
+
+        publicacion.setImagenPorIndice(posicion,"" );
         publicacionRepository.save(publicacion);
 
-        String ruta = "uploads/publicaciones/publicacion_" + id + "/" + nombre;
+        // Eliminar físicamente el archivo
+        String ruta = "C:/Users/6003194/Desktop/TFG/Codigo/programa/uploads/publicaciones/"
+                    + publicacion.getCarpetaImagen() + "/" + nombre;
+
         File archivo = new File(ruta);
         if (archivo.exists()) archivo.delete();
 
-        redirectAttributes.addFlashAttribute("success", "Imagen eliminada.");
+        redirectAttributes.addFlashAttribute("success", "Imagen eliminada correctamente.");
     } else {
-        redirectAttributes.addFlashAttribute("error", "Imagen no encontrada en la publicación.");
+        redirectAttributes.addFlashAttribute("error", "Imagen no encontrada.");
     }
 
-  return "redirect:/detalle?id=" + id;
+    return "redirect:/detalle?id=" + id;
 }
+
 /**
  * Método para mostrar el formulario de edición de una publicación.
  *

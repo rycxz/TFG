@@ -18,7 +18,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import kiricasa.programa.enums.TipoPiso;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -90,55 +89,31 @@ public class PublicacionModel {
     @ToString.Exclude
     private BarriosModel barrio;
 
-    @Transient
-    private String imagenAleatoria;
-
-    public String getImagenAleatoria() {
-        return imagenAleatoria;
-    }
-
-    public void setImagenAleatoria(String imagenAleatoria) {
-        this.imagenAleatoria = imagenAleatoria;
-    }
-
-    /**
-     * ✅ Devuelve exactamente las 9 posiciones, pero si alguna es null o vacía la reemplaza con "" (string vacío)
-     * Para evitar NullPointerException en las vistas
-     */
-    @Transient
-    public List<String> getListaImagenes() {
-        List<String> imagenes = new ArrayList<>();
-        imagenes.add(imagen != null ? imagen : "");
-        imagenes.add(imagen2 != null ? imagen2 : "");
-        imagenes.add(imagen3 != null ? imagen3 : "");
-        imagenes.add(imagen4 != null ? imagen4 : "");
-        imagenes.add(imagen5 != null ? imagen5 : "");
-        imagenes.add(imagen6 != null ? imagen6 : "");
-        imagenes.add(imagen7 != null ? imagen7 : "");
-        imagenes.add(imagen8 != null ? imagen8 : "");
-        imagenes.add(imagen9 != null ? imagen9 : "");
-        return imagenes;
-    }
-public void setFotos(List<String> fotos) {
-    // Rellenar hasta 9 con cadenas vacías si no hay suficientes imágenes
-    while (fotos.size() < 9) {
-        fotos.add("");
-    }
-
-    // Asignar valores a los campos individuales
-    this.imagen = fotos.get(0);
-    this.imagen2 = fotos.get(1);
-    this.imagen3 = fotos.get(2);
-    this.imagen4 = fotos.get(3);
-    this.imagen5 = fotos.get(4);
-    this.imagen6 = fotos.get(5);
-    this.imagen7 = fotos.get(6);
-    this.imagen8 = fotos.get(7);
-    this.imagen9 = fotos.get(8);
+// Devuelve la lista cruda, sin predeterminadas
+public List<String> getFotosOriginales() {
+    return List.of(imagen, imagen2, imagen3, imagen4, imagen5, imagen6, imagen7, imagen8, imagen9);
 }
 
-@Transient
-public List<String> getFotos() {
+public void setImagenPorIndice(int index, String valor) {
+    switch (index) {
+        case 0 -> this.imagen = valor;
+        case 1 -> this.imagen2 = valor;
+        case 2 -> this.imagen3 = valor;
+        case 3 -> this.imagen4 = valor;
+        case 4 -> this.imagen5 = valor;
+        case 5 -> this.imagen6 = valor;
+        case 6 -> this.imagen7 = valor;
+        case 7 -> this.imagen8 = valor;
+        case 8 -> this.imagen9 = valor;
+    }
+}
+
+
+ public String getImagePrincipal() {
+    return (imagen == null || imagen.isEmpty()) ? "predeterminada.png" : imagen;
+}
+
+    public List<String> getFotos() {
     List<String> imagenesOriginales = List.of(imagen, imagen2, imagen3, imagen4, imagen5, imagen6, imagen7, imagen8, imagen9);
 
     List<String> imagenes = new ArrayList<>();
@@ -153,6 +128,20 @@ public List<String> getFotos() {
     return imagenes;
 }
 
+public String getImagenPorIndice(int index) {
+    return switch (index) {
+        case 0 -> imagen;
+        case 1 -> imagen2;
+        case 2 -> imagen3;
+        case 3 -> imagen4;
+        case 4 -> imagen5;
+        case 5 -> imagen6;
+        case 6 -> imagen7;
+        case 7 -> imagen8;
+        case 8 -> imagen9;
+        default -> null;
+    };
+}
 
 
     public String getCarpetaImagen() {

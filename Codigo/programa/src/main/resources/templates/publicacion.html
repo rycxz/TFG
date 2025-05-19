@@ -38,10 +38,8 @@
 
 <section class="carousel">
     <div class="carousel-container">
-<img id="carousel-image"
-     th:src="@{'/uploads/publicaciones/' + ${publicacion.carpeta} + '/' + ${fotos[0]}}"
-     alt="Foto del piso">
-
+        <img id="carousel-image"
+             src="" alt="Foto del piso">
 
         <button class="prev" id="prev">&#10094;</button>
         <button class="next" id="next">&#10095;</button>
@@ -53,17 +51,29 @@
     let fotos = [[${fotos}]];
     let carpeta = [[${publicacion.carpeta}]];
 
- fotos = fotos.map(foto =>
-    foto === 'null'
-        ? `/uploads/publicaciones/default_folder/predeterminada.png`
-        : `/uploads/publicaciones/${carpeta}/${foto}`
-);
+    // Mapeamos a URLs reales o a la predeterminada
+    fotos = fotos.map(foto =>
+        !foto || foto.trim() === "" || foto === "predeterminada.png"
+            ? null
+            : `/uploads/publicaciones/${carpeta}/${foto}`
+    );
+
+    // Si todas las imágenes están vacías, poner al menos una predeterminada
+    if (fotos.every(f => f === null)) {
+        fotos = ["/uploads/publicaciones/predeterminada.png"];
+    }
+
+    // Buscamos la primera imagen válida para iniciar el carrusel
+    let currentIndex = fotos.findIndex(f => f !== null);
+    if (currentIndex === -1) currentIndex = 0;
+
+    // Reemplazar los null por la predeterminada en la lista final
+    fotos = fotos.map(f => f ?? "/uploads/publicaciones/predeterminada.png");
 
     document.addEventListener('DOMContentLoaded', function () {
         const imageElement = document.getElementById('carousel-image');
         const prevBtn = document.getElementById('prev');
         const nextBtn = document.getElementById('next');
-        let currentIndex = 0;
 
         function updateImage() {
             imageElement.src = fotos[currentIndex];
@@ -83,6 +93,8 @@
             prevBtn.style.display = 'none';
             nextBtn.style.display = 'none';
         }
+
+        updateImage(); // ← Inicializar con la imagen válida
     });
     /*]]>*/
 </script>

@@ -84,6 +84,7 @@ public class DataInitializer implements CommandLineRunner {
                     .fechaNacimiento(faker.date().birthday().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate())
                     .fechaRegistro(LocalDateTime.now())
                     .esAdmin(false)
+                    .verificado(faker.bool().bool())
                     .rol(UsuarioRol.USER)
                     .recibirNotificaciones(faker.bool().bool())
                     .build();

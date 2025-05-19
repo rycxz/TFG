@@ -47,20 +47,39 @@
         </div>
     </section>
 
-    <div class="anuncios-grid">
-        <div th:each="publicacion : ${publicaciones}" class="anuncio">
-            <form th:action="@{/detalle}" method="get">
-                <input type="hidden" name="id" th:value="${publicacion.id}" />
-                <button type="submit" class="anuncio-button">
-  <img th:src="@{'/uploads/publicaciones/' + ${publicacion.carpeta} + '/' + ${publicacion.imagenAleatoria}}" alt="Imagen anuncio">
+<div class="anuncios-grid">
 
-
-                    <h3 th:text="${publicacion.ubicacion} + ' - ' + ${publicacion.precio}">Ubicación + Precio</h3>
-
-                </button>
-            </form>
-        </div>
+    <!-- Si el usuario está logueado -->
+    <div th:if="${usuario != null}" th:each="publicacion : ${publicaciones}" class="anuncio">
+        <form th:action="@{/detalle}" method="get">
+            <input type="hidden" name="id" th:value="${publicacion.id}" />
+            <button type="submit" class="anuncio-button">
+                <img th:src="${#strings.isEmpty(publicacion.imagePrincipal) or publicacion.imagePrincipal == 'predeterminada.png'}
+                                ? '/uploads/publicaciones/predeterminada.png'
+                                : '/uploads/publicaciones/' + ${publicacion.carpeta} + '/' + ${publicacion.imagePrincipal}"
+                     alt="Imagen anuncio">
+                <h3 th:text="${publicacion.ubicacion} + ' - ' + ${publicacion.precio}">Ubicación + Precio</h3>
+            </button>
+        </form>
     </div>
+
+    <!-- Si el usuario NO está logueado -->
+    <div th:if="${usuario == null}" th:each="publicacion : ${publicaciones}" class="anuncio">
+        <form th:action="@{/nl/detalle}" method="get">
+            <input type="hidden" name="id" th:value="${publicacion.id}" />
+            <button type="submit" class="anuncio-button">
+                <img th:src="${#strings.isEmpty(publicacion.imagePrincipal) or publicacion.imagePrincipal == 'predeterminada.png'}
+                                ? '/uploads/publicaciones/predeterminada.png'
+                                : '/uploads/publicaciones/' + ${publicacion.carpeta} + '/' + ${publicacion.imagePrincipal}"
+                     alt="Imagen anuncio">
+                <h3 th:text="${publicacion.ubicacion} + ' - ' + ${publicacion.precio}">Ubicación + Precio</h3>
+            </button>
+        </form>
+    </div>
+
+</div>
+
+
 
     <section class="categorias-section">
         <h3 class="categorias-titulo">Filtra por tipo de alojamiento</h3>

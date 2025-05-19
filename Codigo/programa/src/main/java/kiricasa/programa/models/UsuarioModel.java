@@ -56,7 +56,8 @@ public class UsuarioModel implements UserDetails {
     private  String email;
     private String numero;
     private  boolean esAdmin;
-    private String foto;
+private String codigoVerificacion;
+     private  boolean verificado;
     private LocalDate fechaNacimiento;
     @CreationTimestamp
     private LocalDateTime fechaRegistro;

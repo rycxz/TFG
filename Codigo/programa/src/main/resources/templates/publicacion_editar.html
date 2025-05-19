@@ -35,49 +35,44 @@
 
     <h1 class="titulo-editar">Editar Publicación</h1>
 
-<!-- Galería de imágenes -->
-<h2 class="subtitulo-galeria">Galería de imágenes</h2>
 <div class="galeria-imagenes">
-    <div th:each="img, iterStat : ${publicacion.listaImagenes}" class="galeria-item">
+    <div class="galeria-item"
+         th:classappend="${#strings.isEmpty(img) or img == 'predeterminada.png'} ? ' vacia' : ''"
+         th:each="img, iterStat : ${publicacion.fotos}">
 
-        <!-- Si la imagen es nula o vacía: mostrar predeterminada y permitir subir -->
-<form th:if="${img == null or img == 'null' or img == ''}"
-      th:action="@{'/publicacion/editar/' + ${publicacion.id} + '/subir-imagen'}"
-      method="post"
-      enctype="multipart/form-data">
+        <!-- Mostrar input de subida si la imagen está vacía -->
+        <form th:if="${#strings.isEmpty(img) or img == 'predeterminada.png'}"
+              th:action="@{'/publicacion/editar/' + ${publicacion.id} + '/subir-imagen'}"
+              method="post"
+              enctype="multipart/form-data">
+            <input type="hidden" name="posicion" th:value="${iterStat.index}" />
+            <label style="cursor: pointer;">
+                <img src="/uploads/publicaciones/predeterminada.png"
+                     alt="Imagen predeterminada"
+                     class="imagen-anuncio">
+                <input type="file"
+                       name="imagen"
+                       accept="image/png, image/jpeg, image/jpg"
+                       style="display: none;"
+                       onchange="this.closest('form').submit()">
+            </label>
+        </form>
 
-    <label style="cursor: pointer;">
-        <img src="/uploads/publicaciones/default_folder/predeterminada.png"
-             alt="Imagen predeterminada"
-             class="imagen-anuncio">
-
-        <input type="file"
-               name="imagen"
-               accept="image/png, image/jpeg, image/jpg"
-               style="display: none;"
-               onchange="this.closest('form').submit()">
-    </label>
-</form>
-
-
-
-        <!-- Si la imagen existe, mostrarla normalmente con botón eliminar -->
-        <div th:if="${img != null and img != 'null' and img != ''}">
-            <img th:src="'/uploads/publicaciones/' + ${publicacion.carpeta} + '/' + ${img}"
+        <!-- Mostrar imagen real con botón eliminar -->
+        <div th:if="${not #strings.isEmpty(img) and img != 'predeterminada.png'}">
+            <img th:src="@{'/uploads/publicaciones/' + ${publicacion.carpeta} + '/' + ${img}}"
                  alt="Imagen anuncio"
                  class="imagen-anuncio">
-
             <a th:href="@{'/publicacion/editar/' + ${publicacion.id} + '/eliminar-imagen?imagen=' + ${img}}"
                class="boton-eliminar">✖</a>
         </div>
 
-        <!-- Badge "Principal" solo para imagen_0 -->
-        <div th:if="${iterStat.index == 0}" class="badge-principal">
-            Principal
-        </div>
-
+        <!-- Badge solo para imagen 0 -->
+        <div th:if="${iterStat.index == 0}" class="badge-principal">Principal</div>
     </div>
 </div>
+
+
 
 
     <!-- FORMULARIO -->

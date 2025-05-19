@@ -6,7 +6,6 @@
 package kiricasa.programa.controller;
 
 import java.util.List;
-import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -44,10 +43,18 @@ public class HomeController {
 
 
        List<PublicacionModel> publicaciones = publicacionRepository.findAll();
-        for (PublicacionModel pub : publicaciones) {
-        int numeroAleatorio = new Random().nextInt(10); // del 0 al 9
-        pub.setImagenAleatoria("imagen_" + numeroAleatorio + ".jpg");
+
+      //para la iamgen siempre se eleige la primera
+  for (PublicacionModel publicacion : publicaciones) {
+    if (publicacion.getFotos() != null && !publicacion.getFotos().isEmpty()) {
+        System.out.println("Imagen: " + publicacion.getFotos().get(0));
+        publicacion.setImagen(publicacion.getFotos().get(0));
     }
+}
+
+
+
+        // Agregar la lista de publicaciones al modelo
 
     model.addAttribute("publicaciones", publicaciones);
         if (usuario == null || token == null) {
