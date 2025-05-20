@@ -9,31 +9,34 @@
 <div th:fragment="header_nologged">
     <header class="kiri-header">
         <div class="logo">
-            <a th:href="@{/home}">
+            <a th:href="@{/nl/home}">
                 <img src="/images/elementos/sinfondo.png" alt="Kiricasa logo">
             </a>
         </div>
 
+<div class="search-bar">
+    <form th:action="@{/busqueda/buscar}" method="get">
+        <input type="text" name="query" placeholder="Buscar..."  />
+        <button type="submit">
+            <img src="/images/elementos/icono-buscar.svg" alt="Buscar" id="buscar">
+        </button>
+    </form>
+</div>
 
-        <div class="search-bar">
-            <input type="text" placeholder="Buscar..." />
-            <button><img src="/images/elementos/icono-buscar.svg" alt="Buscar" id="buscar"></button>
-        </div>
 
         <div class="icons">
             <a href="/auth/login" class="login-button">Iniciar sesión</a>
         </div>
     </header>
-    <div class="barrios-filtro">
-        <a href="#" class="barrio-btn">San José</a>
-        <a href="#" class="barrio-btn">Centro</a>
-        <a href="#" class="barrio-btn">Universidad</a>
-        <a href="#" class="barrio-btn">La Almozara</a>
-        <a href="#" class="barrio-btn">Torrero-La Paz</a>
-        <a href="#" class="barrio-btn">Las Fuentes</a>
-        <a href="#" class="barrio-btn">Oliver-Valdefierro</a>
-        <a href="#" class="barrio-btn">Miralbueno</a>
-    </div>
+<div class="barrios-filtro">
+  <th:block th:each="b : ${barrios}">
+    <a th:href="@{/nl/home(barrio=${b.nombre})}"
+       th:text="${b.nombre}"
+       class="barrio-btn"></a>
+  </th:block>
+</div>
+
+
 
 </div>
 
@@ -47,26 +50,29 @@
             </a>
         </div>
 
-        <div class="search-bar">
-            <input type="text" placeholder="Buscar..." />
-            <button><img src="/images/elementos/icono-buscar.svg" alt="Buscar" id="buscar"></button>
-        </div>
+       <div class="search-bar">
+    <form th:action="@{/busqueda/buscar}" method="get">
+        <input type="text" name="query" placeholder="Buscar..."  />
+        <button type="submit">
+            <img src="/images/elementos/icono-buscar.svg" alt="Buscar" id="buscar">
+        </button>
+    </form>
+</div>
+
 
         <div class="icons">
-            <a href="#"><img src="/images/elementos/icono-corazon.svg" alt="Favoritos"></a>
+            <a href="/favoritos/ver"><img src="/images/elementos/icono-corazon.svg" alt="Favoritos"></a>
             <a href="/perfil/ver"><img src="/images/elementos/icono-usuario.svg" alt="Usuario"></a>
         </div>
     </header>
-    <div class="barrios-filtro">
-        <a href="#" class="barrio-btn">San José</a>
-        <a href="#" class="barrio-btn">Centro</a>
-        <a href="#" class="barrio-btn">Universidad</a>
-        <a href="#" class="barrio-btn">La Almozara</a>
-        <a href="#" class="barrio-btn">Torrero-La Paz</a>
-        <a href="#" class="barrio-btn">Las Fuentes</a>
-        <a href="#" class="barrio-btn">Oliver-Valdefierro</a>
-        <a href="#" class="barrio-btn">Miralbueno</a>
-    </div>
+<div class="barrios-filtro">
+  <th:block th:each="b : ${barrios}">
+    <a th:href="@{/home(barrio=${b.nombre})}"
+       th:text="${b.nombre}"
+       class="barrio-btn"></a>
+  </th:block>
+</div>
+
 
 </div>
 
@@ -80,26 +86,29 @@
             </a>
         </div>
 
-        <div class="search-bar">
-            <input type="text" placeholder="Buscar..." />
-            <button><img src="/images/elementos/icono-buscar.svg" alt="Buscar" id="buscar"></button>
-        </div>
+   <div class="search-bar">
+    <form th:action="@{/busqueda/buscar}" method="get">
+        <input type="text" name="query" placeholder="Buscar..."  />
+        <button type="submit">
+            <img src="/images/elementos/icono-buscar.svg" alt="Buscar" id="buscar">
+        </button>
+    </form>
+</div>
 
         <div class="icons">
             <span class="admin-label">Admin: <span th:text="${nombre}">Admin</span></span>
+                 <a href="/perfil/ver"><img src="/images/elementos/icono-usuario.svg" alt="Usuario"></a>
             <a href="/logout" class="logout-button">Cerrar sesión</a>
         </div>
     </header>
-    <div class="barrios-filtro">
-        <a href="#" class="barrio-btn">San José</a>
-        <a href="#" class="barrio-btn">Centro</a>
-        <a href="#" class="barrio-btn">Universidad</a>
-        <a href="#" class="barrio-btn">La Almozara</a>
-        <a href="#" class="barrio-btn">Torrero-La Paz</a>
-        <a href="#" class="barrio-btn">Las Fuentes</a>
-        <a href="#" class="barrio-btn">Oliver-Valdefierro</a>
-        <a href="#" class="barrio-btn">Miralbueno</a>
-    </div>
+<div class="barrios-filtro">
+  <th:block th:each="b : ${barrios}">
+    <a th:href="@{/home(barrio=${b.nombre})}"
+       th:text="${b.nombre}"
+       class="barrio-btn"></a>
+  </th:block>
+</div>
+
 
 </div>
 

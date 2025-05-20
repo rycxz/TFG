@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Perfil - Kiricasa</title>
+    <link rel="icon" href="/images/elementos/sinfondo.ico" type="image/x-icon">
+
+    <!-- Estilos -->
+    <th:block th:if="${usuario == null}">
+        <link rel="stylesheet" th:href="@{/css/headers/estilosHeaderNoLogged.css}">
+    </th:block>
+    <th:block th:if="${usuario != null and usuario.rol.name() == 'USER'}">
+        <link rel="stylesheet" th:href="@{/css/headers/estilosHeaderLogged.css}">
+    </th:block>
+    <th:block th:if="${usuario != null and usuario.rol.name() == 'ADMIN'}">
+        <link rel="stylesheet" th:href="@{/css/headers/estilosAdmin.css}">
+    </th:block>
+
+    <link rel="stylesheet" th:href="@{/css/estilosCodigo.css}">
+    <link rel="stylesheet" th:href="@{/css/footer/estilosCodigo.css}">
+</head>
+<body>
+
+<!-- Header -->
+<div th:if="${usuario == null}">
+    <div th:replace="fragmentos/header :: header_nologged"></div>
+</div>
+<div th:if="${usuario != null and usuario.rol.name() == 'USER'}">
+    <div th:replace="fragmentos/header :: header_user(${usuario.nombre})"></div>
+</div>
+<div th:if="${usuario != null and usuario.rol.name() == 'ADMIN'}">
+    <div th:replace="fragmentos/header :: header_admin(${usuario.nombre})"></div>
+</div>
+<h2>Introduce el código recibido por correo</h2>
+
+    <form th:action="@{/nueva-password}" method="post">
+        <!-- Email oculto para reenviarlo en el form -->
+        <input type="hidden" name="email" th:value="${email}" />
+
+        <label for="codigo">Código:</label><br>
+        <input type="text" id="codigo" name="codigo" required><br><br>
+
+        <label for="nuevaPassword">Nueva contraseña:</label><br>
+        <input type="password" id="nuevaPassword" name="nuevaPassword" required><br><br>
+
+        <button type="submit">Cambiar contraseña</button>
+    </form>
+
+    <p th:if="${error}" th:text="${error}" style="color:red;"></p>
+
+<div th:replace="fragmentos/footer :: footer"></div>
+</body>
+</html>

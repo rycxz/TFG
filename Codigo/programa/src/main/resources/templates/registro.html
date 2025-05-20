@@ -126,7 +126,20 @@
     <form th:action="@{/auth/register}" method="post">
       <input type="text" name="nombre" placeholder="Nombre" required>
       <input type="email" name="email" placeholder="Email" required>
-      <input type="password" name="password" placeholder="Contraseña..." required>
+
+  <input
+    type="password"
+    name="password"
+    placeholder="Contraseña (mín. 6 caracteres)"
+    required
+    minlength="6"
+  >
+
+  <div
+    th:if="${errorPassword}"
+    style="color:red; font-size:0.9em;"
+    th:text="${errorPassword}">
+  </div>
       <input type="tel" name="numero" placeholder="Número de teléfono" required>
       <label for="fechaNacimiento">Fecha de nacimiento</label>
       <input type="date" name="fechaNacimiento" required>

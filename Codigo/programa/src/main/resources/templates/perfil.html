@@ -36,7 +36,7 @@
     <ul>
         <li><a th:href="@{/perfil/editar}">Modificar datos del perfil</a></li>
             <li th:if="${!usuario.verificado}">
-                <a th:href="@{/perfil/2fa}">Activar verificación en 2 pasos</a>
+                <a th:href="@{/perfil/2fa}">Verificar correo</a>
             </li>
 
          <li><a th:href="@{/perfil/cambiarPW}">Cambiar Contraseña</a></li>

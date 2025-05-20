@@ -38,13 +38,14 @@
     <div th:if="${usuario != null and usuario.rol.name() == 'ADMIN'}">
         <div th:replace="fragmentos/header :: header_admin(${usuario.nombre})"></div>
     </div>
+    <p th:if="${logout}" th:text="${logout}" class="mensaje-exito"></p>
+
 
     <section class="search-section">
         <h2>Lo que estas buscando, aquí.</h2>
-        <div class="search-box">
-            <input type="text" placeholder="Buscar..." />
-            <button><img src="/images/elementos/icono-buscar.svg" alt="Buscar"></button>
-        </div>
+        <div th:if="${usuario != null and (usuario.rol.name() == 'USER' or usuario.rol.name() == 'ADMIN')}" class="publicar-anuncio">
+        <a th:href="@{/publicacion/nueva}" class="boton-publicar">+ Publicar Anuncio</a>
+    </div>
     </section>
 
 <div class="anuncios-grid">
@@ -81,16 +82,40 @@
 
 
 
-    <section class="categorias-section">
-        <h3 class="categorias-titulo">Filtra por tipo de alojamiento</h3>
-        <p class="categorias-descripcion">Selecciona una categoría para encontrar pisos para hombres, mujeres, mixtos o individuales.</p>
-        <div class="categorias-container">
-            <a href="/?tipo=Hombres" class="categoria-button">Hombres</a>
-            <a href="/?tipo=Mujeres" class="categoria-button">Mujeres</a>
-            <a href="/?tipo=Mixto" class="categoria-button">Mixto</a>
-            <a href="/?tipo=Solo" class="categoria-button">Solo</a>
-        </div>
-    </section>
+<section class="categorias-section">
+  <h3 class="categorias-titulo">Filtra por tipo de alojamiento</h3>
+  <p class="categorias-descripcion">
+    Selecciona una categoría para encontrar pisos para hombres, mujeres, mixtos o individuales.
+  </p>
+  <div class="categorias-container">
+    <a th:href="${usuario != null}
+                 ? @{/home(tipo='Hombres')}
+                 : @{/nl/home(tipo='Hombres')}"
+       class="categoria-button">
+      Hombres
+    </a>
+    <a th:href="${usuario != null}
+                 ? @{/home(tipo='Mujeres')}
+                 : @{/nl/home(tipo='Mujeres')}"
+       class="categoria-button">
+      Mujeres
+    </a>
+    <a th:href="${usuario != null}
+                 ? @{/home(tipo='Mixto')}
+                 : @{/nl/home(tipo='Mixto')}"
+       class="categoria-button">
+      Mixto
+    </a>
+    <a th:href="${usuario != null}
+                 ? @{/home(tipo='Solo')}
+                 : @{/nl/home(tipo='Solo')}"
+       class="categoria-button">
+      Solo
+    </a>
+  </div>
+</section>
+
+
 
 
 

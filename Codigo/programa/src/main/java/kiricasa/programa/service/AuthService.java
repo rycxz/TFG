@@ -28,6 +28,8 @@ public class AuthService {
      private final PasswordEncoder passwordEncoder;
      private final AuthenticationManager authenticationManager;
 
+
+
      public AuthReponse login(LoginRequest request) {
 
 
@@ -84,6 +86,33 @@ public class AuthService {
               .token(token)
               .build();
   }
+public void cambiarPasswordConCodigo(String email, String codigo, String nuevaPassword) {
+    UsuarioModel usuario = usuarioRepository.findByEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException("Email no registrado"));
+
+    if (usuario.getCodigoRecuperacion() == null || usuario.getExpiracionCodigo() == null) {
+        throw new RuntimeException("No hay solicitud de recuperación activa");
+    }
+
+    if (!codigo.equals(usuario.getCodigoRecuperacion())) {
+        throw new RuntimeException("Código incorrecto");
+    }
+
+    if (usuario.getExpiracionCodigo().isBefore(LocalDateTime.now())) {
+        throw new RuntimeException("El código ha expirado");
+    }
+
+    // Actualizamos la contraseña
+    usuario.setPassword(passwordEncoder.encode(nuevaPassword));
+
+    // Limpiamos los datos temporales
+    usuario.setCodigoRecuperacion(null);
+    usuario.setExpiracionCodigo(null);
+
+    usuarioRepository.save(usuario);
+}
+
+
 
 
 }

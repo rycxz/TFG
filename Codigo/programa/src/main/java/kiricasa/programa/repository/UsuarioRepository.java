@@ -55,4 +55,7 @@ public interface UsuarioRepository extends JpaRepository<UsuarioModel, Long> {
     // Buscar por rol y ordenar por nombre descendente
     List<UsuarioModel> findByRolOrderByNombreDesc(UsuarioRol rol);
 
+
+    boolean existsByEmailIgnoreCase(String email);
+
 }

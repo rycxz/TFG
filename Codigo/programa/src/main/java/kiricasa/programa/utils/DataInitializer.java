@@ -126,7 +126,7 @@ public class DataInitializer implements CommandLineRunner {
                 pub.setUbicacion(faker.address().streetAddress());
                pub.setTipo(faker.options().option(TipoPiso.HOMBRES, TipoPiso.MUJERES, TipoPiso.MIXTO, TipoPiso.SOLO));
 
-                pub.setPrecio(String.valueOf(faker.number().numberBetween(300, 1200)) + "€");
+                pub.setPrecio(faker.number().numberBetween(300, 1200));
                 pub.setEstado(faker.options().option("Disponible", "Alquilado"));
                 pub.setMetrosCuadrados(faker.number().numberBetween(30, 120));
                 pub.setHabitaciones(String.valueOf(faker.number().numberBetween(1, 4)));

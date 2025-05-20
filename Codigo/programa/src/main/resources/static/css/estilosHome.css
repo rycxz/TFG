@@ -143,6 +143,26 @@ body {
 /* SECCIÓN DE CATEGORÍAS */
 
 
+/* Botón Publicar Anuncio */
+.publicar-anuncio {
+    margin-top: 20px;
+}
+
+.boton-publicar {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #2ecc71;
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.boton-publicar:hover {
+    background-color: #27ae60;
+}
+
 
 .categorias-container {
     display: flex;

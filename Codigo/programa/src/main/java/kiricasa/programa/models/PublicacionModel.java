@@ -69,7 +69,7 @@ public class PublicacionModel {
     @Enumerated(EnumType.STRING)
     private TipoPiso tipo;
 
-    private String precio;
+    private Integer  precio;
     private String estado;
 
     @Column(nullable = false)

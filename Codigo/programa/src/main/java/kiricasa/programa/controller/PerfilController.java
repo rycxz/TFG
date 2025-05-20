@@ -8,6 +8,7 @@ package kiricasa.programa.controller;
 import java.util.List;
 import java.util.Random;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +25,7 @@ import kiricasa.programa.models.UsuarioModel;
 import kiricasa.programa.repository.FavoritosRepository;
 import kiricasa.programa.repository.PublicacionRepository;
 import kiricasa.programa.repository.UsuarioRepository;
+import kiricasa.programa.service.CorreoService;
 import lombok.AllArgsConstructor;
 
 /**
@@ -37,6 +39,8 @@ public class PerfilController {
     private PublicacionRepository publicacionRepository;
     private FavoritosRepository favoritosRepository;
     private UsuarioRepository usuarioRepository;
+    private CorreoService emailService;
+    private  PasswordEncoder passwordEncoder;
 
          /**
           * Método para mostrar el perfil del usuario.
@@ -96,47 +100,86 @@ public class PerfilController {
             return "redirect:/perfil/ver";
         }
         @GetMapping("/2fa")
-       public String mostrarFormulario2FA(HttpSession session, Model model) {
-        UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
-        if (usuario == null) return "redirect:/auth/login";
+        public String mostrarFormularioVerificacion(HttpSession session, Model model) {
+            UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
+            if (usuario == null) return "redirect:/auth/login";
 
-        if (usuario.isVerificado()) {
-            return "redirect:/perfil"; // Ya activado
+            // Generar código y simular envío
+            String codigo = String.format("%06d", new Random().nextInt(999999));
+            session.setAttribute("codigoVerificacion", codigo);
+
+           emailService.enviarCodigo(usuario.getEmail(), codigo);
+
+            model.addAttribute("usuario", usuario);
+            return "perfil_verificar";
         }
+        @PostMapping("/2fa")
+        public String procesarCodigoVerificacion(@RequestParam("codigo") String codigo,
+                                                HttpSession session,
+                                                RedirectAttributes redirectAttributes) {
+            UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
+            if (usuario == null) return "redirect:/auth/login";
 
-        // Generar código de 6 cifras
-        String codigo = String.format("%06d", new Random().nextInt(999999));
-
-        // Guardar en BD
-        usuario.setCodigoVerificacion(codigo);
-        usuarioRepository.save(usuario);
-
-        // (Opcional) Simular envío por consola o correo
-        System.out.println("🔐 Código 2FA: " + codigo);
-
-        model.addAttribute("usuario", usuario);
-        return "perfil_2fa_verificar"; // Vista con campo para introducir código
-    }
-        @PostMapping
-    public String verificarCodigo(@RequestParam("codigo") String codigoIngresado,
-                                  HttpSession session,
-                                  Model model) {
-        UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
-        if (usuario == null) return "redirect:/auth/login";
-
-        if (usuario.getCodigoVerificacion().equals(codigoIngresado)) {
-            usuario.setVerificado(true);
-            usuario.setCodigoVerificacion(null);
-            usuarioRepository.save(usuario);
-
-            session.setAttribute("usuario", usuario); // actualizar en sesión
-            model.addAttribute("success", "Verificación completada.");
-            return "redirect:/perfil/ver";
-        } else {
-            model.addAttribute("error", "Código incorrecto.");
-            return "perfil_2fa_verificar";
+            String codigoGuardado = (String) session.getAttribute("codigoVerificacion");
+            if (codigo.equals(codigoGuardado)) {
+                usuario.setVerificado(true);
+                usuarioRepository.save(usuario);
+                session.setAttribute("usuario", usuario);
+                redirectAttributes.addFlashAttribute("success", "Cuenta verificada correctamente.");
+                return "redirect:/perfil/ver";
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Código incorrecto. Intenta de nuevo.");
+                return "redirect:/perfil/ver";
+            }
         }
-    }
+        @GetMapping("/cambiarPW")
+        public String mostrarFormularioCambioPassword(Model model, HttpSession session) {
+              UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
+              if (usuario == null) return "redirect:/auth/login";
+              model.addAttribute("usuario", usuario);
+            return "perfil_cambiarPW";
+        }
+        @PostMapping("/cambiarPW")
+            public String procesarCambioPassword(@RequestParam String actualPassword,
+                                                @RequestParam String nuevaPassword,
+                                                @RequestParam String confirmarPassword,
+                                                HttpSession session,
+                                                RedirectAttributes redirectAttributes) {
+                UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
+
+                if (usuario == null) return "redirect:/auth/login";
+
+                // Validar contraseña actual
+                if (!passwordEncoder.matches(actualPassword, usuario.getPassword())) {
+                    redirectAttributes.addFlashAttribute("error", "La contraseña actual no es correcta.");
+                    return "redirect:/perfil/cambiarPW";
+                }
+
+                // Validar longitud mínima
+                if (nuevaPassword.length() < 6) {
+                    redirectAttributes.addFlashAttribute("error", "La nueva contraseña debe tener al menos 6 caracteres.");
+                    return "redirect:/perfil/cambiarPW";
+                }
+
+                // Validar coincidencia
+                if (!nuevaPassword.equals(confirmarPassword)) {
+                    redirectAttributes.addFlashAttribute("error", "Las nuevas contraseñas no coinciden.");
+                    return "redirect:/perfil/cambiarPW";
+                }
+
+                // Actualizar contraseña
+                usuario.setPassword(passwordEncoder.encode(nuevaPassword));
+                usuarioRepository.save(usuario);
+                redirectAttributes.addFlashAttribute("success", "Contraseña actualizada correctamente.");
+                return "redirect:/perfil/ver";
+            }
+        @GetMapping("/logout")
+            public String cerrarSesion(HttpSession session,Model model) {
+                session.invalidate();
+                  model.addAttribute("logout", "Sesión cerrada correctamente.");
+                return "redirect:/nl/home";
+            }
+
 
 
 

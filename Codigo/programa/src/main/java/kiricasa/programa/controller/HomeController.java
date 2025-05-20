@@ -1,70 +1,76 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
 package kiricasa.programa.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpSession;
+import kiricasa.programa.enums.TipoPiso;
 import kiricasa.programa.models.PublicacionModel;
+import kiricasa.programa.repository.BarriosRepository;
 import kiricasa.programa.repository.PublicacionRepository;
+import lombok.AllArgsConstructor;
 
-
-
-
-/**
- *
- * @author 6003194
- */
 @Controller
-@RequestMapping()
-
-
+@RequestMapping
+@AllArgsConstructor
 public class HomeController {
-    @Autowired
-    private PublicacionRepository publicacionRepository;
-  @GetMapping("/home")
-    public String mostrarHome(Model model, HttpSession session) {
-        /* if (!sessionUtils.isUserLogged(session))
-        {
-        return "redirect:/auth/login";
-        } */
 
-        String token = (String) session.getAttribute("jwt");
+    private final PublicacionRepository publicacionRepository;
+    private final BarriosRepository barriosRepository;
+
+    @GetMapping("/home")
+    public String mostrarHome(
+            @RequestParam(required = false) String barrio,
+            @RequestParam(required = false) String tipo,
+            Model model,
+            HttpSession session
+    ) {
+        // Sesión / token
+        String token   = (String) session.getAttribute("jwt");
         Object usuario = session.getAttribute("usuario");
-
-
-       List<PublicacionModel> publicaciones = publicacionRepository.findAll();
-
-      //para la iamgen siempre se eleige la primera
-  for (PublicacionModel publicacion : publicaciones) {
-    if (publicacion.getFotos() != null && !publicacion.getFotos().isEmpty()) {
-        System.out.println("Imagen: " + publicacion.getFotos().get(0));
-        publicacion.setImagen(publicacion.getFotos().get(0));
-    }
-}
-
-
-
-        // Agregar la lista de publicaciones al modelo
-
-    model.addAttribute("publicaciones", publicaciones);
         if (usuario == null || token == null) {
             return "redirect:/nl/home";
         }
 
+        // Datos comunes
+        model.addAttribute("barrios", barriosRepository.findAll());
         model.addAttribute("usuario", usuario);
+        model.addAttribute("tipos", List.of("Hombres","Mujeres","Mixto","Solo"));
 
+        List<PublicacionModel> publicaciones;
+
+        if (tipo != null && !tipo.isBlank()) {
+            try {
+                // Convertir de String a enum
+                TipoPiso tipoEnum = TipoPiso.valueOf(tipo.trim().toUpperCase());
+                publicaciones = publicacionRepository.findByTipo(tipoEnum);
+            } catch (IllegalArgumentException ex) {
+                // Valor de tipo no válido -> ningún resultado
+                publicaciones = List.of();
+            }
+        }
+        else if (barrio != null && !barrio.isBlank()) {
+            publicaciones = publicacionRepository.buscarConFiltros(
+                null, null, null, null, null, null, null, null, barrio
+            );
+        }
+        else {
+            publicaciones = publicacionRepository.findAll();
+        }
+
+        // Primera foto como principal
+        for (PublicacionModel pub : publicaciones) {
+            if (!pub.getFotos().isEmpty()) {
+                pub.setImagen(pub.getFotos().get(0));
+            }
+        }
+
+        model.addAttribute("publicaciones", publicaciones);
         return "home";
     }
-
-
 }

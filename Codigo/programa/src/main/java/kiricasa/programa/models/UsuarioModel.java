@@ -56,8 +56,15 @@ public class UsuarioModel implements UserDetails {
     private  String email;
     private String numero;
     private  boolean esAdmin;
-private String codigoVerificacion;
-     private  boolean verificado;
+       @Column(nullable = false)
+    private boolean verificado = false;
+    @Column(name = "codigo_recuperacion")
+    private String codigoRecuperacion;
+
+    @Column(name = "expiracion_codigo")
+    private LocalDateTime expiracionCodigo;
+
+
     private LocalDate fechaNacimiento;
     @CreationTimestamp
     private LocalDateTime fechaRegistro;

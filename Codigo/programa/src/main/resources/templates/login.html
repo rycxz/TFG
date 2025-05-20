@@ -152,10 +152,15 @@
       <div class="login-input">
         <input type="password" name="password" placeholder="Contraseña..." required>
       </div>
-
+<div th:if="${loginError}" style="color:red; margin-bottom:1em;">
+  <span th:text="${loginError}"></span>
+</div>
       <div class="login-buttons">
         <button type="submit">Iniciar Sesión</button>
-        <button type="button" onclick="location.href='{/auth/recovery}'">RecuperarContraseña</button>
+      <button type="button"
+        th:onclick="|window.location.href='@{/auth/recupera}'|">
+  Recuperar Contraseña
+</button>
       </div>
     </form>
   </div>

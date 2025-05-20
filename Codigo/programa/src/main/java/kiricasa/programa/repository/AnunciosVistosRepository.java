@@ -12,6 +12,7 @@ import kiricasa.programa.models.UsuarioModel;
 @Repository
 public interface AnunciosVistosRepository extends JpaRepository<AnunciosVistosModel, Long> {
 
+         void deleteByPublicacionId(Long publicacionId);
     // Buscar por usuario
     List<AnunciosVistosModel> findByUsuario(UsuarioModel usuario);
 
