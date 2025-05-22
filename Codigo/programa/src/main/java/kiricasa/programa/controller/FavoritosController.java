@@ -20,6 +20,7 @@ import jakarta.transaction.Transactional;
 import kiricasa.programa.models.FavoritosModel;
 import kiricasa.programa.models.PublicacionModel;
 import kiricasa.programa.models.UsuarioModel;
+import kiricasa.programa.repository.BarriosRepository;
 import kiricasa.programa.repository.FavoritosRepository;
 import kiricasa.programa.repository.PublicacionRepository;
 import lombok.AllArgsConstructor;
@@ -35,6 +36,7 @@ import lombok.AllArgsConstructor;
 public class FavoritosController {
         private final FavoritosRepository favoritosRepository;
     private final PublicacionRepository publicacionRepository;
+    private final BarriosRepository barriosRepository;
 
     @PostMapping("/añadir")
     @Transactional
@@ -94,6 +96,7 @@ public String eliminarFavorito(@RequestParam("publicacionId") Long id, RedirectA
         }
 
         List<FavoritosModel> favoritos = favoritosRepository.findByUsuario(usuario);
+         model.addAttribute("barrios", barriosRepository.findAll());
         model.addAttribute("usuario", usuario);
         model.addAttribute("favoritos", favoritos);
         return "favoritos";

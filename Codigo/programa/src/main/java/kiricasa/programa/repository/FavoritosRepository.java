@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import kiricasa.programa.models.FavoritosModel;
 import kiricasa.programa.models.PublicacionModel;
@@ -27,4 +28,8 @@ public interface FavoritosRepository extends JpaRepository<FavoritosModel, Long>
 
     // Eliminar un favorito por usuario y publicación
     void deleteByUsuarioAndPublicacion(UsuarioModel usuario, PublicacionModel publicacion);
+        @Transactional
+        void deleteByUsuario_Id(Long userId);
+        void deleteByPublicacion_Id(Long publicacionId);
+
 }

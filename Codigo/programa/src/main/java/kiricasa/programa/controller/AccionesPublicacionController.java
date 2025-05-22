@@ -78,9 +78,10 @@ public class AccionesPublicacionController {
      * @return
      */
     @PostMapping("/editar/{id}/subir-imagen")
+        @SuppressWarnings("CallToPrintStackTrace")
     public String subirImagen(@PathVariable Long id,
                             @RequestParam("imagen") MultipartFile archivo,
-                            RedirectAttributes redirectAttributes) {
+                            RedirectAttributes redirectAttributes,Model model) {
 
 
 
@@ -103,11 +104,15 @@ public class AccionesPublicacionController {
 
         }
 
-        // RUTA ABSOLUTA para guardar en disco correctamente
-        String basePath = "C:/Users/6003194/Desktop/TFG/Codigo/programa/uploads/publicaciones/";
+
+ String basePath = "C:/Users/recur/Desktop/TFG/Codigo/programa/uploads/publicaciones/";
+
+
+
         String carpetaFinal = basePath + carpetaActual;
         File directorio = new File(carpetaFinal);
         if (!directorio.exists()) {
+            @SuppressWarnings("unused")
             boolean creado = directorio.mkdirs();
 
         }
@@ -150,14 +155,14 @@ publicacionRepository.save(publicacion);
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Error al guardar la imagen.");
         }
-
+         model.addAttribute("barrios", barriosRepository.findAll());
         return "redirect:/detalle?id=" + id;
     }
 
     @GetMapping("/editar/{id}/eliminar-imagen")
     public String eliminarImagen(@PathVariable Long id,
                                 @RequestParam("imagen") String nombre,
-                                RedirectAttributes redirectAttributes) {
+                                RedirectAttributes redirectAttributes,Model model) {
 
         PublicacionModel publicacion = publicacionRepository.findById(id).orElse(null);
         if (publicacion == null) {
@@ -175,7 +180,10 @@ publicacionRepository.save(publicacion);
             publicacionRepository.save(publicacion);
 
             // Eliminar físicamente el archivo
-            String ruta = "C:/Users/6003194/Desktop/TFG/Codigo/programa/uploads/publicaciones/"
+           String ruta = "C:/Users/recur/Desktop/TFG/Codigo/programa/uploads/publicaciones/"
+
+
+
                         + publicacion.getCarpetaImagen() + "/" + nombre;
 
             File archivo = new File(ruta);
@@ -185,7 +193,7 @@ publicacionRepository.save(publicacion);
         } else {
             redirectAttributes.addFlashAttribute("error", "Imagen no encontrada.");
         }
-
+ model.addAttribute("barrios", barriosRepository.findAll());
         return "redirect:/detalle?id=" + id;
     }
 
@@ -218,7 +226,7 @@ publicacionRepository.save(publicacion);
                                     @RequestParam int numeroCompañeros,
                                     @RequestParam Long barrioId,
                                     RedirectAttributes redirectAttributes,
-                                    HttpSession session) {
+                                    HttpSession session,Model model) {
 
     UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
     String token = (String) session.getAttribute("jwt");
@@ -227,7 +235,7 @@ publicacionRepository.save(publicacion);
         redirectAttributes.addFlashAttribute("error", "Sesión expirada.");
         return "redirect:/nl/home";
     }
-
+ model.addAttribute("barrios", barriosRepository.findAll());
     Optional<PublicacionModel> optionalPublicacion = publicacionRepository.findById(id);
     if (optionalPublicacion.isEmpty()) {
         redirectAttributes.addFlashAttribute("error", "La publicación no existe.");
@@ -292,7 +300,7 @@ public String publicarNuevaPublicacion(@RequestParam String titulo,
                                        @RequestParam Long barrioId,
                                        @RequestParam("imagenes") List<MultipartFile> imagenes,
                                        RedirectAttributes redirectAttributes,
-                                       HttpSession session) {
+                                       HttpSession session,Model model) {
 
     UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
     String token = (String) session.getAttribute("jwt");
@@ -329,7 +337,10 @@ public String publicarNuevaPublicacion(@RequestParam String titulo,
     // Crear carpeta en disco
     String carpeta = "publicacion_" + publicacion.getId();
     publicacion.setCarpetaImagen(carpeta);
-    String basePath = "C:/Users/6003194/Desktop/TFG/Codigo/programa/uploads/publicaciones/";
+String basePath = "C:/Users/recur/Desktop/TFG/Codigo/programa/uploads/publicaciones/";
+
+
+
     String rutaFinal = basePath + carpeta;
     File carpetaDir = new File(rutaFinal);
     if (!carpetaDir.exists()) carpetaDir.mkdirs();
@@ -349,11 +360,13 @@ public String publicarNuevaPublicacion(@RequestParam String titulo,
             } catch (IOException e) {
                 e.printStackTrace();
                 redirectAttributes.addFlashAttribute("error", "Error al guardar imagen: " + imagen.getOriginalFilename());
+                System.out.println("❌ Error al guardar imagen en disco");
                 return "redirect:/publicacion/nueva";
             }
         }
+        return "redirect:/home";
     }
-
+ model.addAttribute("barrios", barriosRepository.findAll());
     // Reasignar imágenes subidas (si hay)
     for (int i = 0; i < nombresImagenes.size(); i++) {
         publicacion.setImagenPorIndice(i, nombresImagenes.get(i));
@@ -364,7 +377,8 @@ public String publicarNuevaPublicacion(@RequestParam String titulo,
 
     redirectAttributes.addFlashAttribute("success", "Anuncio publicado correctamente.");
     return "redirect:/perfil/ver";
-}  @GetMapping("/eliminar/{id}")
+}
+  @GetMapping("/eliminar/{id}")
     public String eliminarPublicacion(
             @PathVariable Long id,
             RedirectAttributes redirectAttributes,

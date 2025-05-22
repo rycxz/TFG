@@ -117,6 +117,7 @@ protected void doFilterInternal(@NonNull HttpServletRequest request,
            path.startsWith("/js") ||
            path.startsWith("/images") ||
            path.startsWith("/uploads") ||
+              path.startsWith("/variado") ||
            path.startsWith("/nl") ||
            path.equals("/") ||
            path.endsWith(".html");

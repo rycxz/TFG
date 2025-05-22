@@ -93,7 +93,7 @@ public String verDetalle(@RequestParam("id") Long id, Model model, RedirectAttri
         favorito = favoritosRepository.findByUsuarioAndPublicacion(usuarioLogueado, publicacion).orElse(null);
         enFavoritos = favorito != null;
     }
-
+ model.addAttribute("barrios", barriosRepository.findAll());
     model.addAttribute("enFavoritos", enFavoritos);
     model.addAttribute("favorito", favorito);
     model.addAttribute("fotos", fotos);

@@ -27,7 +27,7 @@ public interface PublicacionRepository extends JpaRepository<PublicacionModel, L
     // Buscar publicaciones por tipo (piso, habitación, etc.)
  List<PublicacionModel> findByTipo(TipoPiso tipo);
 
-
+List<PublicacionModel> findByUsuario_Id(Long id);
 
     // Buscar por usuario y estado
     List<PublicacionModel> findByUsuarioAndEstado(UsuarioModel usuario, String estado);
@@ -71,6 +71,8 @@ List<PublicacionModel> buscarConFiltros(
     @Param("numeroCompañeros") Integer numeroCompañeros,
     @Param("barrio") String barrio
 );
+
+List<PublicacionModel> findByBarrio_Id(Long id);
 
 
 }

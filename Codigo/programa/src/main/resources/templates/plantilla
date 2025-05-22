@@ -17,7 +17,7 @@
         <link rel="stylesheet" th:href="@{/css/headers/estilosAdmin.css}">
     </th:block>
 
-    <link rel="stylesheet" th:href="@{/css/estilos2FA.css}">
+    <link rel="stylesheet" th:href="@{/css/estilosTermninos.css}">
     <link rel="stylesheet" th:href="@{/css/footer/estilosFooter.css}">
 </head>
 <body>

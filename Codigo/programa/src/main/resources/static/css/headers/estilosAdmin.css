@@ -17,6 +17,30 @@
     display: flex;
     align-items: center;
 }
+.btn-admin {
+    background-color: #cf513d;        /* Color rojizo a juego con tu tema */
+    color: white;
+    padding: 8px 14px;
+    margin-left: 15px;
+    font-weight: bold;
+    font-size: 14px;
+    border: none;
+    border-radius: 20px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-admin:hover {
+    background-color: #b74633;
+    transform: scale(1.05);
+    text-decoration: none;
+    color: white;
+}
+
+.btn-admin:active {
+    transform: scale(0.98);
+}
+
 
 .kiri-header .logo img {
     max-width: 100%;

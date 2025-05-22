@@ -37,7 +37,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
             .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-            .requestMatchers("/auth/**","/nl/**", "/css/**", "/js/**", "/images/**","/uploads/**" ).permitAll()
+            .requestMatchers("/auth/**","/nl/**", "/css/**", "/js/**", "/images/**","/uploads/**","variado/**" ).permitAll()
             .anyRequest().authenticated()
         )
 

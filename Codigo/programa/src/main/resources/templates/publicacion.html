@@ -145,7 +145,8 @@
 
 <div class="botones-acciones" th:if="${puedeGestionar}">
     <a th:href="@{'/publicacion/editar/' + ${publicacion.id}}" class="btn-accion">Modificar anuncio</a>
-    <a th:href="@{'/publicacion/eliminar/' + ${publicacion.id}}" class="btn-accion eliminar">Eliminar anuncio</a>
+<a th:href="@{/publicacion/eliminar/{id}(id=${publicacion.id})}" class="btn-accion eliminar">Eliminar anuncio</a>
+
 </div>
 
 

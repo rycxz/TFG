@@ -22,6 +22,7 @@ import jakarta.servlet.http.HttpSession;
 import kiricasa.programa.models.FavoritosModel;
 import kiricasa.programa.models.PublicacionModel;
 import kiricasa.programa.models.UsuarioModel;
+import kiricasa.programa.repository.BarriosRepository;
 import kiricasa.programa.repository.FavoritosRepository;
 import kiricasa.programa.repository.PublicacionRepository;
 import kiricasa.programa.repository.UsuarioRepository;
@@ -41,6 +42,7 @@ public class PerfilController {
     private UsuarioRepository usuarioRepository;
     private CorreoService emailService;
     private  PasswordEncoder passwordEncoder;
+    private BarriosRepository barriosRepository;
 
          /**
           * Método para mostrar el perfil del usuario.
@@ -58,7 +60,7 @@ public class PerfilController {
               if (usuarioLogueado == null || token == null) {
                 return "redirect:/nl/home";
               }
-
+ model.addAttribute("barrios", barriosRepository.findAll());
               model.addAttribute("usuario", usuarioLogueado);
                 model.addAttribute("publicaciones", publicaciones);
                 model.addAttribute("favoritos", favoritos);
@@ -73,14 +75,14 @@ public class PerfilController {
             if (usuario == null || token == null) {
                 return "redirect:/nl/home";
             }
-
+             model.addAttribute("barrios", barriosRepository.findAll());
             model.addAttribute("usuario", usuario);
             return "perfil_editar"; // Vista con el formulario
         }
         @PostMapping("/editar")
         public String procesarEdicionPerfil(@ModelAttribute UsuarioModel usuarioForm,
                                             HttpSession session,
-                                            RedirectAttributes redirectAttributes) {
+                                            RedirectAttributes redirectAttributes,Model model) {
 
             UsuarioModel usuarioSesion = (UsuarioModel) session.getAttribute("usuario");
 
@@ -95,7 +97,7 @@ public class PerfilController {
 
             usuarioRepository.save(usuarioSesion);
             session.setAttribute("usuario", usuarioSesion); // Actualizar en sesión
-
+            model.addAttribute("barrios", barriosRepository.findAll());
             redirectAttributes.addFlashAttribute("success", "Perfil actualizado correctamente.");
             return "redirect:/perfil/ver";
         }
@@ -109,18 +111,19 @@ public class PerfilController {
             session.setAttribute("codigoVerificacion", codigo);
 
            emailService.enviarCodigo(usuario.getEmail(), codigo);
-
+             model.addAttribute("barrios", barriosRepository.findAll());
             model.addAttribute("usuario", usuario);
             return "perfil_verificar";
         }
         @PostMapping("/2fa")
         public String procesarCodigoVerificacion(@RequestParam("codigo") String codigo,
                                                 HttpSession session,
-                                                RedirectAttributes redirectAttributes) {
+                                                RedirectAttributes redirectAttributes ,Model model) {
             UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
             if (usuario == null) return "redirect:/auth/login";
 
             String codigoGuardado = (String) session.getAttribute("codigoVerificacion");
+             model.addAttribute("barrios", barriosRepository.findAll());
             if (codigo.equals(codigoGuardado)) {
                 usuario.setVerificado(true);
                 usuarioRepository.save(usuario);
@@ -136,6 +139,7 @@ public class PerfilController {
         public String mostrarFormularioCambioPassword(Model model, HttpSession session) {
               UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
               if (usuario == null) return "redirect:/auth/login";
+               model.addAttribute("barrios", barriosRepository.findAll());
               model.addAttribute("usuario", usuario);
             return "perfil_cambiarPW";
         }
@@ -144,11 +148,11 @@ public class PerfilController {
                                                 @RequestParam String nuevaPassword,
                                                 @RequestParam String confirmarPassword,
                                                 HttpSession session,
-                                                RedirectAttributes redirectAttributes) {
+                                                RedirectAttributes redirectAttributes,Model model) {
                 UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
 
                 if (usuario == null) return "redirect:/auth/login";
-
+ model.addAttribute("barrios", barriosRepository.findAll());
                 // Validar contraseña actual
                 if (!passwordEncoder.matches(actualPassword, usuario.getPassword())) {
                     redirectAttributes.addFlashAttribute("error", "La contraseña actual no es correcta.");
