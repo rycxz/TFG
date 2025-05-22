@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import jakarta.servlet.http.HttpSession;
 import kiricasa.programa.models.UsuarioModel;
 import kiricasa.programa.repository.BarriosRepository;
-import kiricasa.programa.repository.UsuarioRepository;
 import lombok.AllArgsConstructor;
 
 /**
@@ -25,9 +24,15 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class VariadoController {
 
-        private UsuarioRepository usuarioRepository;
-        private  BarriosRepository barriosRepository;
+
+        private final  BarriosRepository barriosRepository;
     @GetMapping("/blog")
+    /**
+     * * Muestra la vista del blog
+     * @param model
+     * @param session
+     * @return
+     */
     public String blog(Model model, HttpSession session) {
             UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
         model.addAttribute("barrios", barriosRepository.findAll());
@@ -36,6 +41,12 @@ public class VariadoController {
     }
 
     @GetMapping("/privacidad")
+    /**
+     * * Muestra la vista de política de privacidad
+     * @param model
+     * @param session
+     * @return
+     */
     public String politicaPrivacidad(Model model, HttpSession session) {
          UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
           model.addAttribute("barrios", barriosRepository.findAll());
@@ -44,6 +55,12 @@ public class VariadoController {
     }
 
     @GetMapping("/condiciones")
+    /**
+     * * Muestra la vista de términos y condiciones
+     * @param model
+     * @param session
+     * @return
+     */
     public String terminosCondiciones(Model model, HttpSession session) {
          UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
            model.addAttribute("barrios", barriosRepository.findAll());

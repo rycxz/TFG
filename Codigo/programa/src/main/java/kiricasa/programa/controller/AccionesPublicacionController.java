@@ -38,6 +38,15 @@ import lombok.AllArgsConstructor;
  *
  * @author 6003194
  */
+/**
+ * controlador para gestionar las acciones relacionadas con las publicaciones.
+ * permite editar, eliminar, crear y gestionar imagenes de publicaciones.
+ *
+ *
+ * Requiere que el usuario esté autenticado y tenga permisos adecuados (dueño o admin).
+
+ * @author recur
+ */
 @Controller
 @RequestMapping("/publicacion")
 @AllArgsConstructor
@@ -46,7 +55,14 @@ public class AccionesPublicacionController {
               private final BarriosRepository barriosRepository;
                private final AnunciosVistosRepository anuncioVistoRepository;
     @GetMapping("/editar/{id}")
-    public String mostrarFormularioEdicion(@PathVariable("id") Long id, Model model, HttpSession session) {
+    /**
+     * Método para mostrar el formulario de edición de una publicación.
+     * @param id
+     * @param model
+     * @param session
+     * @return
+     */
+        public String mostrarFormularioEdicion(@PathVariable("id") Long id, Model model, HttpSession session) {
         UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
         if (usuario == null) return "redirect:/auth/login";
 
@@ -77,8 +93,16 @@ public class AccionesPublicacionController {
      * @param redirectAttributes
      * @return
      */
-    @PostMapping("/editar/{id}/subir-imagen")
+        @PostMapping("/editar/{id}/subir-imagen")
         @SuppressWarnings("CallToPrintStackTrace")
+        /**
+         * Método para subir una imagen a una publicación.
+         * @param id
+         * @param archivo
+         * @param redirectAttributes
+         * @param model
+         * @return
+         */
     public String subirImagen(@PathVariable Long id,
                             @RequestParam("imagen") MultipartFile archivo,
                             RedirectAttributes redirectAttributes,Model model) {
@@ -139,15 +163,7 @@ public class AccionesPublicacionController {
                 break;
             }
         }
-
-// Guardar cambios en la base de datos
-publicacionRepository.save(publicacion);
-
-
-
-
-
-
+               publicacionRepository.save(publicacion);
             redirectAttributes.addFlashAttribute("success", "Imagen subida correctamente.");
 
         } catch (IOException e) {
@@ -160,6 +176,14 @@ publicacionRepository.save(publicacion);
     }
 
     @GetMapping("/editar/{id}/eliminar-imagen")
+    /**
+     * Método para eliminar una imagen de una publicación.
+     * @param id
+     * @param nombre
+     * @param redirectAttributes
+     * @param model
+     * @return
+     */
     public String eliminarImagen(@PathVariable Long id,
                                 @RequestParam("imagen") String nombre,
                                 RedirectAttributes redirectAttributes,Model model) {
@@ -196,7 +220,6 @@ publicacionRepository.save(publicacion);
  model.addAttribute("barrios", barriosRepository.findAll());
         return "redirect:/detalle?id=" + id;
     }
-
     /**
      * Método para mostrar el formulario de edición de una publicación.
      *
@@ -206,11 +229,6 @@ publicacionRepository.save(publicacion);
      * @param redirectAttributes Atributos para redirección.
      * @return Vista del formulario de edición.
      *
-     * @param id
-     * @param model
-     * @param session
-     * @param redirectAttributes
-     * @return
      */
     @PostMapping("/editar/{id}/editarinfo")
     public String editarInfoPublicacion(@PathVariable Long id,
@@ -273,112 +291,129 @@ publicacionRepository.save(publicacion);
     @GetMapping("/nueva")
         public String mostrarFormularioPublicar(Model model, HttpSession session) {
             UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
-
             if (usuario == null) {
                 return "redirect:/auth/login";
             }
-
             List<BarriosModel> barrios = barriosRepository.findAll();
 
             model.addAttribute("usuario", usuario);
             model.addAttribute("publicacion", new PublicacionModel());
             model.addAttribute("barrios", barrios);
-
             return "publicar";
         }
-@PostMapping("/publicar")
-public String publicarNuevaPublicacion(@RequestParam String titulo,
-                                       @RequestParam String descripcion,
-                                       @RequestParam Integer precio,
-                                       @RequestParam String estado,
-                                       @RequestParam TipoPiso tipo,
-                                       @RequestParam String ubicacion,
-                                       @RequestParam int metrosCuadrados,
-                                       @RequestParam String habitaciones,
-                                       @RequestParam(required = false, defaultValue = "false") boolean permiteMascotas,
-                                       @RequestParam int numeroCompañeros,
-                                       @RequestParam Long barrioId,
-                                       @RequestParam("imagenes") List<MultipartFile> imagenes,
-                                       RedirectAttributes redirectAttributes,
-                                       HttpSession session,Model model) {
+    @PostMapping("/publicar")
+    /**
+     * Método para publicar una nueva publicación.
+     * @param titulo
+     * @param descripcion
+     * @param precio
+     * @param estado
+     * @param tipo
+     * @param ubicacion
+     * @param metrosCuadrados
+     * @param habitaciones
+     * @param permiteMascotas
+     * @param numeroCompañeros
+     * @param barrioId
+     * @param imagenes
+     * @param redirectAttributes
+     * @param session
+     * @param model
+     * @return
+     */
+        @SuppressWarnings("CallToPrintStackTrace")
+    public String publicarNuevaPublicacion(@RequestParam String titulo,
+                                        @RequestParam String descripcion,
+                                        @RequestParam Integer precio,
+                                        @RequestParam String estado,
+                                        @RequestParam TipoPiso tipo,
+                                        @RequestParam String ubicacion,
+                                        @RequestParam int metrosCuadrados,
+                                        @RequestParam String habitaciones,
+                                        @RequestParam(required = false, defaultValue = "false") boolean permiteMascotas,
+                                        @RequestParam int numeroCompañeros,
+                                        @RequestParam Long barrioId,
+                                        @RequestParam("imagenes") List<MultipartFile> imagenes,
+                                        RedirectAttributes redirectAttributes,
+                                        HttpSession session,Model model) {
 
-    UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
-    String token = (String) session.getAttribute("jwt");
-
-    if (usuario == null || token == null) {
-        redirectAttributes.addFlashAttribute("error", "Sesión expirada.");
-        return "redirect:/auth/login";
-    }
-
-    // Crear publicación con imágenes predeterminadas
-    PublicacionModel publicacion = new PublicacionModel();
-    publicacion.setTitulo(titulo);
-    publicacion.setDescripcion(descripcion);
-    publicacion.setPrecio(precio);
-    publicacion.setEstado(estado);
-    publicacion.setTipo(tipo);
-    publicacion.setUbicacion(ubicacion);
-    publicacion.setMetrosCuadrados(metrosCuadrados);
-    publicacion.setHabitaciones(habitaciones);
-    publicacion.setPermiteMascotas(permiteMascotas);
-    publicacion.setNumeroCompañeros(numeroCompañeros);
-    publicacion.setUsuario(usuario);
-
-    barriosRepository.findById(barrioId).ifPresent(publicacion::setBarrio);
-
-    // Inicializar imágenes con predeterminada
-    for (int i = 0; i < 9; i++) {
-        publicacion.setImagenPorIndice(i, "predeterminada.png");
-    }
-
-    // Guardar para generar el ID (carpeta)
-    publicacionRepository.save(publicacion);
-
-    // Crear carpeta en disco
-    String carpeta = "publicacion_" + publicacion.getId();
-    publicacion.setCarpetaImagen(carpeta);
-String basePath = "C:/Users/recur/Desktop/TFG/Codigo/programa/uploads/publicaciones/";
-
-
-
-    String rutaFinal = basePath + carpeta;
-    File carpetaDir = new File(rutaFinal);
-    if (!carpetaDir.exists()) carpetaDir.mkdirs();
-
-    // Subir imágenes
-    List<String> nombresImagenes = new ArrayList<>();
-    int contador = 0;
-
-    for (MultipartFile imagen : imagenes) {
-        if (imagen != null && !imagen.isEmpty() && contador < 9) {
-            try {
-                String nombreOriginal = imagen.getOriginalFilename();
-                Path destino = Paths.get(rutaFinal, nombreOriginal);
-                imagen.transferTo(destino.toFile());
-                nombresImagenes.add(nombreOriginal);
-                contador++;
-            } catch (IOException e) {
-                e.printStackTrace();
-                redirectAttributes.addFlashAttribute("error", "Error al guardar imagen: " + imagen.getOriginalFilename());
-                System.out.println("❌ Error al guardar imagen en disco");
-                return "redirect:/publicacion/nueva";
-            }
+        UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
+        String token = (String) session.getAttribute("jwt");
+        if (usuario == null || token == null) {
+            redirectAttributes.addFlashAttribute("error", "Sesión expirada.");
+            return "redirect:/auth/login";
         }
-        return "redirect:/home";
-    }
- model.addAttribute("barrios", barriosRepository.findAll());
-    // Reasignar imágenes subidas (si hay)
-    for (int i = 0; i < nombresImagenes.size(); i++) {
-        publicacion.setImagenPorIndice(i, nombresImagenes.get(i));
-    }
+        // Crear publicación con imágenes predeterminadas
+        PublicacionModel publicacion = new PublicacionModel();
+        publicacion.setTitulo(titulo);
+        publicacion.setDescripcion(descripcion);
+        publicacion.setPrecio(precio);
+        publicacion.setEstado(estado);
+        publicacion.setTipo(tipo);
+        publicacion.setUbicacion(ubicacion);
+        publicacion.setMetrosCuadrados(metrosCuadrados);
+        publicacion.setHabitaciones(habitaciones);
+        publicacion.setPermiteMascotas(permiteMascotas);
+        publicacion.setNumeroCompañeros(numeroCompañeros);
+        publicacion.setUsuario(usuario);
+        barriosRepository.findById(barrioId).ifPresent(publicacion::setBarrio);
+        // Inicializar imágenes con predeterminada
+        for (int i = 0; i < 9; i++) {
+            publicacion.setImagenPorIndice(i, "predeterminada.png");
+        }
 
-    // Guardar cambios definitivos
-    publicacionRepository.save(publicacion);
+        // Guardar para generar el ID (carpeta)
+        publicacionRepository.save(publicacion);
 
-    redirectAttributes.addFlashAttribute("success", "Anuncio publicado correctamente.");
-    return "redirect:/perfil/ver";
-}
-  @GetMapping("/eliminar/{id}")
+        // Crear carpeta en disco
+        String carpeta = "publicacion_" + publicacion.getId();
+        publicacion.setCarpetaImagen(carpeta);
+    String basePath = "C:/Users/recur/Desktop/TFG/Codigo/programa/uploads/publicaciones/";
+
+
+
+        String rutaFinal = basePath + carpeta;
+        File carpetaDir = new File(rutaFinal);
+        if (!carpetaDir.exists()) carpetaDir.mkdirs();
+
+        // Subir imágenes
+        List<String> nombresImagenes = new ArrayList<>();
+        int contador = 0;
+
+        for (MultipartFile imagen : imagenes) {
+            if (imagen != null && !imagen.isEmpty() && contador < 9) {
+                try {
+                    String nombreOriginal = imagen.getOriginalFilename();
+                    Path destino = Paths.get(rutaFinal, nombreOriginal);
+                    imagen.transferTo(destino.toFile());
+                    nombresImagenes.add(nombreOriginal);
+                    contador++;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    redirectAttributes.addFlashAttribute("error", "Error al guardar imagen: " + imagen.getOriginalFilename());
+                    System.out.println("❌ Error al guardar imagen en disco");
+                    return "redirect:/publicacion/nueva";
+                }
+            }
+            return "redirect:/home";
+        }
+    model.addAttribute("barrios", barriosRepository.findAll());
+        // Reasignar imágenes subidas (si hay)
+        for (int i = 0; i < nombresImagenes.size(); i++) {
+            publicacion.setImagenPorIndice(i, nombresImagenes.get(i));
+        }
+
+        // Guardar cambios definitivos
+        publicacionRepository.save(publicacion);
+
+        redirectAttributes.addFlashAttribute("success", "Anuncio publicado correctamente.");
+        return "redirect:/perfil/ver";
+    }
+    @GetMapping("/eliminar/{id}")
+  /**
+   * Método para eliminar una publicación.
+   * @param id                 ID de la publicación a eliminar.
+   */
     public String eliminarPublicacion(
             @PathVariable Long id,
             RedirectAttributes redirectAttributes,

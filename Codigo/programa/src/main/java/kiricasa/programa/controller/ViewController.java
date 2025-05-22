@@ -9,12 +9,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ViewController {
 
     @GetMapping("/register")
+    /**
+     * Muestra la vista de registro
+     * @return
+     */
     public String showRegisterPage() {
         System.out.println("register--------------- pero por get");
-        return "registro";  // Thymeleaf buscará templates/registro.html
+        return "registro";
     }
 
     @GetMapping("/login")
+    /**
+     * Muestra la vista de login
+     * @return
+     */
     public String showLoginPage() {
         return "login";
     }

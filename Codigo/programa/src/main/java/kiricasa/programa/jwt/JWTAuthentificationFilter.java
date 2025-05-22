@@ -36,14 +36,21 @@ public class JWTAuthentificationFilter  extends OncePerRequestFilter{
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 @Override
+    @SuppressWarnings("UseSpecificCatch")
+    /**
+     * * Método que se ejecuta para cada petición
+     */
 protected void doFilterInternal(@NonNull HttpServletRequest request,
                                 @NonNull HttpServletResponse response,
                                 @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-    String path = request.getServletPath();
+    String path = request.getRequestURI();
+System.out.println("→ Ruta actual: " + path);
+System.out.println("→ ¿Es pública? " + isRutaPublica(path));
+
     System.out.println("→ Filtro ejecutado para ruta: " + path);
 
-    // 1. Excluir rutas públicas del filtro
+
     if (isRutaPublica(path)) {
         filterChain.doFilter(request, response);
         return;
@@ -51,7 +58,7 @@ protected void doFilterInternal(@NonNull HttpServletRequest request,
 
     String token = getTokenFromRequest(request);
 
-    // 2. Token también desde la sesión si no está en Authorization header
+
     if (token == null) {
         Object sessionToken = request.getSession(false) != null
                 ? request.getSession().getAttribute("jwt")
@@ -75,7 +82,7 @@ protected void doFilterInternal(@NonNull HttpServletRequest request,
             }
         }
     } catch (io.jsonwebtoken.ExpiredJwtException e) {
-        System.out.println("⚠️ Token expirado.");
+        System.out.println("Token expirado.");
         request.getSession().removeAttribute("jwt");
         request.getSession().invalidate();
 
@@ -87,7 +94,7 @@ protected void doFilterInternal(@NonNull HttpServletRequest request,
         response.sendRedirect(request.getContextPath() + "/auth/login?expired=true");
         return;
     } catch (Exception e) {
-        System.out.println("⚠️ Token inválido o error: " + e.getMessage());
+        System.out.println("Token inválido o error: " + e.getMessage());
         request.getSession().removeAttribute("jwt");
         request.getSession().invalidate();
 
@@ -100,7 +107,7 @@ protected void doFilterInternal(@NonNull HttpServletRequest request,
         return;
     }
 
-    // 3. Continuar normalmente
+
     filterChain.doFilter(request, response);
 }
 
@@ -112,7 +119,10 @@ protected void doFilterInternal(@NonNull HttpServletRequest request,
         return null;
     }
     private boolean isRutaPublica(String path) {
-    return path.startsWith("/auth") ||
+    return path.equals("/auth/recupera") ||
+           path.equals("/auth/nueva-password") ||
+           path.equals("/auth/login") ||
+           path.equals("/auth/register") ||
            path.startsWith("/css") ||
            path.startsWith("/js") ||
            path.startsWith("/images") ||

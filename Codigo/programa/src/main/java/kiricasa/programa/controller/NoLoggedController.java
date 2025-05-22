@@ -76,6 +76,7 @@ public class NoLoggedController {
      * Vista de detalle para no logueados.
      */
     @GetMapping("/detalle")
+
     public String verDetalle(
             @RequestParam("id") Long id,
             Model model

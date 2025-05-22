@@ -37,12 +37,12 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/perfil")
 @AllArgsConstructor
 public class PerfilController {
-    private PublicacionRepository publicacionRepository;
-    private FavoritosRepository favoritosRepository;
-    private UsuarioRepository usuarioRepository;
-    private CorreoService emailService;
-    private  PasswordEncoder passwordEncoder;
-    private BarriosRepository barriosRepository;
+    private final  PublicacionRepository publicacionRepository;
+    private final FavoritosRepository favoritosRepository;
+    private final  UsuarioRepository usuarioRepository;
+    private final CorreoService emailService;
+    private final  PasswordEncoder passwordEncoder;
+    private final  BarriosRepository barriosRepository;
 
          /**
           * Método para mostrar el perfil del usuario.
@@ -68,6 +68,12 @@ public class PerfilController {
               return "perfil";
          }
         @GetMapping("/editar")
+        /**
+         * * Muestra el formulario de edición del perfil
+         * @param session
+         * @param model
+         * @return
+         */
         public String mostrarFormularioEdicion(HttpSession session, Model model) {
             UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
             String token = (String) session.getAttribute("jwt");
@@ -80,6 +86,14 @@ public class PerfilController {
             return "perfil_editar"; // Vista con el formulario
         }
         @PostMapping("/editar")
+        /**
+         *  * Procesa la edición del perfil
+         * @param usuarioForm
+         * @param session
+         * @param redirectAttributes
+         * @param model
+         * @return
+         */
         public String procesarEdicionPerfil(@ModelAttribute UsuarioModel usuarioForm,
                                             HttpSession session,
                                             RedirectAttributes redirectAttributes,Model model) {
@@ -102,6 +116,12 @@ public class PerfilController {
             return "redirect:/perfil/ver";
         }
         @GetMapping("/2fa")
+        /**
+         * * Muestra el formulario de verificación de 2FA
+         * @param session
+         * @param model
+         * @return
+         */
         public String mostrarFormularioVerificacion(HttpSession session, Model model) {
             UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
             if (usuario == null) return "redirect:/auth/login";
@@ -116,6 +136,14 @@ public class PerfilController {
             return "perfil_verificar";
         }
         @PostMapping("/2fa")
+        /**
+         * * Procesa el código de verificación
+         * @param codigo
+         * @param session
+         * @param redirectAttributes
+         * @param model
+         * @return
+         */
         public String procesarCodigoVerificacion(@RequestParam("codigo") String codigo,
                                                 HttpSession session,
                                                 RedirectAttributes redirectAttributes ,Model model) {
@@ -136,6 +164,12 @@ public class PerfilController {
             }
         }
         @GetMapping("/cambiarPW")
+        /**
+         * * Muestra el formulario para cambiar la contraseña
+         * @param model
+         * @param session
+         * @return
+         */
         public String mostrarFormularioCambioPassword(Model model, HttpSession session) {
               UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
               if (usuario == null) return "redirect:/auth/login";
@@ -144,6 +178,9 @@ public class PerfilController {
             return "perfil_cambiarPW";
         }
         @PostMapping("/cambiarPW")
+        /**
+         * * Procesa el cambio de contraseña
+         */
             public String procesarCambioPassword(@RequestParam String actualPassword,
                                                 @RequestParam String nuevaPassword,
                                                 @RequestParam String confirmarPassword,
@@ -152,7 +189,7 @@ public class PerfilController {
                 UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
 
                 if (usuario == null) return "redirect:/auth/login";
- model.addAttribute("barrios", barriosRepository.findAll());
+                    model.addAttribute("barrios", barriosRepository.findAll());
                 // Validar contraseña actual
                 if (!passwordEncoder.matches(actualPassword, usuario.getPassword())) {
                     redirectAttributes.addFlashAttribute("error", "La contraseña actual no es correcta.");
@@ -178,6 +215,12 @@ public class PerfilController {
                 return "redirect:/perfil/ver";
             }
         @GetMapping("/logout")
+        /**
+         * * Cierra la sesión del usuario
+         * @param session
+         * @param model
+         * @return
+         */
             public String cerrarSesion(HttpSession session,Model model) {
                 session.invalidate();
                   model.addAttribute("logout", "Sesión cerrada correctamente.");

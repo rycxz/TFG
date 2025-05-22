@@ -32,6 +32,13 @@ public class AuthController {
 
 
    @PostMapping("/login")
+   /**
+    * * Muestra la vista de login
+    * @param request
+    * @param session
+    * @param redirectAttributes
+    * @return
+    */
 public String login(
         @ModelAttribute LoginRequest request,
         HttpSession session,
@@ -56,6 +63,14 @@ public String login(
 }
 
     @PostMapping("/register")
+    /**
+     * * * Muestra la vista de registro
+     * @param request
+     * @param bindingResult
+     * @param model
+     * @param session
+     * @return
+     */
     public String register(
             @Valid @ModelAttribute("registerRequest") RegisterRequest request,
             BindingResult bindingResult,
@@ -83,11 +98,18 @@ public String login(
 
 
 @GetMapping("/recupera")
+/**
+ * * Muestra el formulario de recuperación de contraseña
+ */
 public String mostrarFormularioRecuperacion() {
 
     return "recupera";
 }
 @PostMapping("/recupera")
+/**
+ * * Procesa el formulario de recuperación de contraseña
+ * @param email
+ */
 public String procesarFormularioRecuperacion(
         @RequestParam("email") String email,
         Model model) {
@@ -104,6 +126,14 @@ public String procesarFormularioRecuperacion(
 }
 
 @PostMapping("/nueva-password")
+/**
+ * * Procesa el formulario de nueva contraseña
+ * @param email
+ * @param codigo
+ * @param nuevaPassword
+ * @param model
+ * @return
+ */
 public String cambiarPassword(
         @RequestParam("email") String email,
         @RequestParam("codigo") String codigo,
@@ -112,11 +142,11 @@ public String cambiarPassword(
 
     try {
         authService.cambiarPasswordConCodigo(email, codigo, nuevaPassword);
-        return "redirect:/login?recuperacionExitosa"; // Redirige al login
+        return "redirect:/auth/login? ";
     } catch (RuntimeException e) {
         model.addAttribute("error", e.getMessage());
         model.addAttribute("email", email);
-        return "introduce-codigo"; // Vuelve a la vista con error
+        return "introduce-codigo";
     }
 }
 

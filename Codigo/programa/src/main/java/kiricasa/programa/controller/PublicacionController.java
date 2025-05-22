@@ -46,6 +46,14 @@ public class PublicacionController {
            * @return
            */
 @GetMapping("/detalle")
+/**
+ * * Muestra el detalle de una publicación
+ * @param id
+ * @param model
+ * @param redirectAttributes
+ * @param session
+ * @return
+ */
 public String verDetalle(@RequestParam("id") Long id, Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         System.out.println("Estoy en el controlador de detalle");
     PublicacionModel publicacion = publicacionRepository.findById(id).orElse(null);
@@ -75,12 +83,10 @@ public String verDetalle(@RequestParam("id") Long id, Model model, RedirectAttri
     UsuarioModel propietario = publicacion.getUsuario();
     System.out.println("Propietario: " + propietario.getNombre());
     boolean puedeGestionar = false;
-    if (propietario != null && usuarioLogueado != null) {
+
         puedeGestionar = usuarioLogueado.getRol() == UsuarioRol.ADMIN
                 || propietario.getId().equals(usuarioLogueado.getId());
-    }
 
-    // ✅ Protejo si publicacion.getBarrio() es null
     String nombreBarrio = Optional.ofNullable(publicacion.getBarrio())
             .flatMap(b -> barriosRepository.findNombreById(b.getId()))
             .orElse("Barrio desconocido");

@@ -8,17 +8,29 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import kiricasa.programa.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 
 
 
+/**
+ * clase de configuración de la aplicación para la gestión de autenticación y seguridad.
+ *
+ * proporciona beans para AuthenticationManager, AuthenticationProvider, PasswordEncoder y UserDetailsService,
+ * utilizando el repositorio de usuarios para la autenticación personalizada.
+ *
+ * @author recur
+ */
 @Configuration
 @RequiredArgsConstructor
+/**
+ * * @author recur
+ *
+ */
 public class ApplicationConfig {
         private final UsuarioRepository usuarioRepository;
     @Bean

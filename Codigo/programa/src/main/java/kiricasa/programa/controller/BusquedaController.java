@@ -34,6 +34,13 @@ public class BusquedaController {
          private final BarriosRepository barriosRepository;
 
         @GetMapping("/buscar")
+        /**
+         * * * Muestra la vista de búsqueda
+         * @param query
+         * @param model
+         * @param session
+         * @return
+         */
          public String buscar(@RequestParam("query") String query, Model model,    HttpSession session) {
           UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
         if (usuario == null) {
@@ -50,6 +57,22 @@ public class BusquedaController {
     }
 
     @GetMapping("/filtros")
+    /**
+     * * Muestra la vista de búsqueda con filtros
+
+     * @param titulo
+     * @param ubicacion
+     * @param estado
+     * @param precioMax
+     * @param metrosCuadradosMin
+     * @param habitaciones
+     * @param permiteMascotas
+     * @param numeroCompañeros
+     * @param barrio
+     * @param model
+     * @param session
+     * @return
+     */
     public String filtrarPublicaciones(
     @RequestParam(required = false) String titulo,
     @RequestParam(required = false) String ubicacion,
@@ -76,21 +99,6 @@ public class BusquedaController {
                 if (usuario == null) {
                     return "redirect:/auth/login";
                 }
-System.out.println("📌 FILTROS:");
-System.out.println("titulo: " + titulo);
-System.out.println("ubicacion: " + ubicacion);
-System.out.println("estado: " + estado);
-System.out.println("precioMax (String): " + precioMax);
-System.out.println("metrosCuadradosMin (String): " + metrosCuadradosMin);
-System.out.println("habitaciones: " + habitaciones);
-System.out.println("permiteMascotas: " + permiteMascotas);
-System.out.println("numeroCompañeros (String): " + numeroCompañeros);
-System.out.println("barrio: " + barrio);
-
-System.out.println("✔️ CONVERTIDOS:");
-System.out.println("precioMaxInt: " + parseInteger(precioMax));
-System.out.println("metrosCuadradosMinInt: " + parseInteger(metrosCuadradosMin));
-System.out.println("numeroCompañerosInt: " + parseInteger(numeroCompañeros));
 
            List<PublicacionModel> resultados = publicacionRepository.buscarConFiltros(
         titulo, ubicacion, estado, precio, metros,
@@ -102,6 +110,12 @@ System.out.println("numeroCompañerosInt: " + parseInteger(numeroCompañeros));
         return "resultados_busqueda";
     }
 
+       @SuppressWarnings("UnnecessaryTemporaryOnConversionFromString")
+       /**
+        * Método auxiliar para convertir cadenas a enteros de forma segura
+        * @param value
+        * @return
+        */
     private Integer parseInteger(String value) {
     try {
         return (value == null || value.isBlank()) ? null : Integer.parseInt(value.trim());

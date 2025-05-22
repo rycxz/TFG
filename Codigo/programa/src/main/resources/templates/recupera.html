@@ -49,11 +49,11 @@
 
 <input type="email" id="email" name="email" th:value="${email}" required>
 
-
+        <br><br>
         <button type="submit">Enviar código</button>
     </form>
 
-    <p th:if="${error}" th:text="${error}" style="color:red;"></p>
+
 </div>
 
 <div th:replace="fragmentos/footer :: footer"></div>

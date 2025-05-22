@@ -39,6 +39,13 @@ public class FavoritosController {
     private final BarriosRepository barriosRepository;
 
     @PostMapping("/añadir")
+    /**
+     * * Añade una publicación a favoritos
+     * @param id
+     * @param redirectAttributes
+     * @param session
+     * @return
+     */
     @Transactional
     public String añadirFavorito(@RequestParam("publicacionId") Long id, RedirectAttributes redirectAttributes, HttpSession session) {
         UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
@@ -65,6 +72,13 @@ public class FavoritosController {
     }
 
 @PostMapping("/eliminar")
+/**
+ * * Elimina una publicación de favoritos
+ * @param id
+ * @param redirectAttributes
+ * @param session
+ * @return
+ */
 @Transactional
 public String eliminarFavorito(@RequestParam("publicacionId") Long id, RedirectAttributes redirectAttributes, HttpSession session) {
     UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
@@ -89,6 +103,12 @@ public String eliminarFavorito(@RequestParam("publicacionId") Long id, RedirectA
     return "redirect:/detalle?id=" + id;
 }
     @GetMapping("/ver")
+    /**
+     * * * Muestra la vista de favoritos
+     * @param model
+     * @param session
+     * @return
+     */
     public String verFavoritos(Model model, HttpSession session) {
         UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
         if (usuario == null) {
@@ -102,6 +122,13 @@ public String eliminarFavorito(@RequestParam("publicacionId") Long id, RedirectA
         return "favoritos";
     }
     @PostMapping("/eliminar1")
+    /**
+     * * Elimina una publicación de favoritos
+     * @param id
+     * @param session
+     * @param redirectAttributes
+     * @return
+     */
     @Transactional
     public String eliminarDesdeFavoritos(@RequestParam("publicacionId") Long id,
                                         HttpSession session,

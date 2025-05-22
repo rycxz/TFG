@@ -24,6 +24,15 @@ public class HomeController {
     private final BarriosRepository barriosRepository;
 
     @GetMapping("/home")
+    /**
+     * * Muestra la vista de inicio
+     *
+     * @param barrio
+     * @param tipo
+     * @param model
+     * @param session
+     * @return
+     */
     public String mostrarHome(
             @RequestParam(required = false) String barrio,
             @RequestParam(required = false) String tipo,

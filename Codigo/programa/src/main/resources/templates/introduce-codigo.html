@@ -18,7 +18,7 @@
     </th:block>
 
     <link rel="stylesheet" th:href="@{/css/estilosCodigo.css}">
-    <link rel="stylesheet" th:href="@{/css/footer/estilosCodigo.css}">
+    <link rel="stylesheet" th:href="@{/css/footer/estilosFooter.css}">
 </head>
 <body>
 
@@ -32,22 +32,23 @@
 <div th:if="${usuario != null and usuario.rol.name() == 'ADMIN'}">
     <div th:replace="fragmentos/header :: header_admin(${usuario.nombre})"></div>
 </div>
-<h2>Introduce el código recibido por correo</h2>
+<div id="codigo-wrapper">
+    <h2 id="codigo-title">Introduce el código recibido por correo</h2>
 
-    <form th:action="@{/nueva-password}" method="post">
-        <!-- Email oculto para reenviarlo en el form -->
+    <form id="codigo-form" th:action="@{/auth/nueva-password}" method="post">
         <input type="hidden" name="email" th:value="${email}" />
 
-        <label for="codigo">Código:</label><br>
-        <input type="text" id="codigo" name="codigo" required><br><br>
+        <label for="codigo-input">Código:</label>
+        <input type="text" id="codigo-input" name="codigo" required>
 
-        <label for="nuevaPassword">Nueva contraseña:</label><br>
-        <input type="password" id="nuevaPassword" name="nuevaPassword" required><br><br>
+        <label for="nuevaPassword-input">Nueva contraseña:</label>
+        <input type="password" id="nuevaPassword-input" name="nuevaPassword" required>
 
-        <button type="submit">Cambiar contraseña</button>
+        <button id="codigo-submit" type="submit">Cambiar contraseña</button>
     </form>
 
-    <p th:if="${error}" th:text="${error}" style="color:red;"></p>
+    <p id="codigo-error" th:if="${error}" th:text="${error}"></p>
+</div>
 
 <div th:replace="fragmentos/footer :: footer"></div>
 </body>

@@ -22,6 +22,12 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
 
     @Bean
+    /**
+     * * configura la seguridad de la aplicacion
+     * @param http
+     * @return
+     * @throws Exception
+     */
 public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.exceptionHandling(ex -> ex
     .accessDeniedHandler((request, response, accessDeniedException) -> {
@@ -33,10 +39,12 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
 );
 
     return http
-
+        //desactiva la proteccion csrf
         .csrf(csrf -> csrf.disable())
+        //desactiva la proteccion de cabeceras
         .authorizeHttpRequests(auth -> auth
             .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
+            //rutas permitidas
             .requestMatchers("/auth/**","/nl/**", "/css/**", "/js/**", "/images/**","/uploads/**","variado/**" ).permitAll()
             .anyRequest().authenticated()
         )
@@ -45,7 +53,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
     )
 
-
+        //este código personaliza la autenticación y el cierre de sesión en la aplicación, asegurando que se manejen correctamente las sesiones y los tokens JWT.
         .authenticationProvider(authenticationProvider)
         .addFilterBefore(jwtAuthentificationFilter, UsernamePasswordAuthenticationFilter.class)
             .logout(logout -> logout

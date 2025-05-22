@@ -48,6 +48,12 @@ public class AdminController {
       @SuppressWarnings("FieldMayBeFinal")
     private AnunciosVistosRepository anunciosVistosRepository;
     @GetMapping("/ver")
+    /**
+     * * Muestra la vista de administración
+     * @param model
+     * @param session
+     * @return
+     */
     public String verAdmin(Model model, HttpSession session) {
         UsuarioModel current = (UsuarioModel) session.getAttribute("usuario");
         if (current == null || current.getRol() != UsuarioRol.ADMIN) {
@@ -62,6 +68,13 @@ public class AdminController {
     }
 @PostMapping("/usuarios/delete/{id}")
 @Transactional
+/**
+ * * Elimina un usuario y sus publicaciones
+ * @param id
+ * @param ra
+ * @param session
+ * @return
+ */
 public String deleteUser(@PathVariable Long id,
                          RedirectAttributes ra,
                          HttpSession session) {
@@ -72,26 +85,20 @@ public String deleteUser(@PathVariable Long id,
         return "redirect:/home";
     }
 
-    // 1) Borrar favoritos del usuario
     favoritosRepository.deleteByUsuario_Id(id);
 
-    // 2) Borrar registros de anuncios vistos del usuario
     anunciosVistosRepository.deleteByUsuario_Id(id);
 
-    // 3) Borrar publicaciones del usuario
     List<PublicacionModel> publicaciones = publicacionRepository.findByUsuario_Id(id);
     for (PublicacionModel pub : publicaciones) {
-        // Borrar anuncios vistos relacionados con la publicación
+
         anunciosVistosRepository.deleteByPublicacion_Id(pub.getId());
+     favoritosRepository.deleteByPublicacion_Id(pub.getId());
 
-        // Borrar favoritos que referencian a esta publicación
-        favoritosRepository.deleteByPublicacion_Id(pub.getId());
 
-        // Borrar la publicación
         publicacionRepository.delete(pub);
     }
 
-    // 4) Borrar finalmente al usuario
     usuarioRepository.deleteById(id);
 
     ra.addFlashAttribute("success", "Usuario eliminado correctamente.");
@@ -99,6 +106,13 @@ public String deleteUser(@PathVariable Long id,
 }
 @PostMapping("/usuarios/hacer-admin/{id}")
 @Transactional
+/**
+ * * * Cambia el rol de un usuario a ADMIN
+ * @param id
+ * @param ra
+ * @param session
+ * @return
+ */
 public String hacerAdmin(@PathVariable Long id,
                          RedirectAttributes ra,
                          HttpSession session) {
@@ -119,6 +133,13 @@ public String hacerAdmin(@PathVariable Long id,
 
 @PostMapping("/usuarios/quitar-admin/{id}")
 @Transactional
+/**
+ * * * Cambia el rol de un usuario a USER
+ * @param id
+ * @param ra
+ * @param session
+ * @return
+ */
 public String quitarAdmin(@PathVariable Long id,
                           RedirectAttributes ra,
                           HttpSession session) {
@@ -137,6 +158,14 @@ public String quitarAdmin(@PathVariable Long id,
     return "redirect:/admin/ver";
 }
 @PostMapping("/barrios/add")
+/**
+ * * * Agrega un nuevo barrio
+ * @param nombre
+ * @param descripcion
+ * @param ubicacion
+ * @param ra
+ * @return
+ */
 public String agregarBarrio(@RequestParam String nombre,
                             @RequestParam String descripcion,
                             @RequestParam String ubicacion,
@@ -164,6 +193,13 @@ public String agregarBarrio(@RequestParam String nombre,
 }
 @PostMapping("/barrios/delete/{id}")
 @Transactional
+/**
+ * * * Elimina un barrio y sus publicaciones
+ * @param id
+ * @param ra
+ * @param session
+ * @return
+ */
 public String eliminarBarrio(@PathVariable Long id, RedirectAttributes ra, HttpSession session) {
     UsuarioModel current = (UsuarioModel) session.getAttribute("usuario");
     if (current == null || current.getRol() != UsuarioRol.ADMIN) {
@@ -171,7 +207,7 @@ public String eliminarBarrio(@PathVariable Long id, RedirectAttributes ra, HttpS
         return "redirect:/home";
     }
 
-    // 1. Obtener las publicaciones del barrio
+
     List<PublicacionModel> publicaciones = publicacionRepository.findByBarrio_Id(id);
     for (PublicacionModel pub : publicaciones) {
         favoritosRepository.deleteByPublicacion_Id(pub.getId());
@@ -179,7 +215,7 @@ public String eliminarBarrio(@PathVariable Long id, RedirectAttributes ra, HttpS
         publicacionRepository.delete(pub);
     }
 
-    // 2. Borrar el barrio
+
     barriosRepository.deleteById(id);
     ra.addFlashAttribute("success", "Barrio y sus publicaciones eliminados correctamente.");
     return "redirect:/admin/ver";
