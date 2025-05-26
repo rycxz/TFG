@@ -206,6 +206,12 @@ public String eliminarBarrio(@PathVariable Long id, RedirectAttributes ra, HttpS
         ra.addFlashAttribute("error", "No tienes permisos para esta acción.");
         return "redirect:/home";
     }
+            if (current.getId().equals(id)) {
+                    ra.addFlashAttribute("error", "No puedes eliminarte a ti mismo.");
+                    return "redirect:/admin/ver";
+                }
+
+
 
 
     List<PublicacionModel> publicaciones = publicacionRepository.findByBarrio_Id(id);

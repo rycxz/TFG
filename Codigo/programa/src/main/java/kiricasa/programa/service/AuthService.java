@@ -61,6 +61,10 @@ public class AuthService {
       if (usuarioRepository.findByEmail(request.getEmail()).isPresent()) {
           throw new RuntimeException("El email ya está registrado");
       }
+       if (usuarioRepository.findByNombreIgnoreCase(request.getNombre()).isPresent()) {
+        throw new RuntimeException("El nombre de usuario ya está en uso");
+    }
+
 
 
       UsuarioModel usuario = UsuarioModel.builder()

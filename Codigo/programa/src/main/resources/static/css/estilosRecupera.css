@@ -1,6 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Cabin+Rounded&family=Nunito:wght@800&display=swap');
+
+:root {
+    --color-principal: #cc5443;
+    --color-secundario: #a54034;
+    --color-fondo: #fef7f3;
+    --fuente-titulo: 'Nunito', sans-serif;
+    --fuente-cuerpo: 'Cabin Rounded', sans-serif;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(to bottom right, #e9f2ff, #fefefe);
+    font-family: var(--fuente-cuerpo);
+    background-color: var(--color-fondo);
     margin: 0;
     padding: 0;
     min-height: 100vh;
@@ -15,63 +25,69 @@ body {
     align-items: center;
     justify-content: center;
     padding: 40px 20px;
+    text-align: center;
 }
 
 h2 {
-    color: #2c3e50;
-    font-size: 28px;
+    font-family: var(--fuente-titulo);
+    color: var(--color-principal);
+    font-size: 2em;
     margin-bottom: 30px;
 }
 
 form {
-    background: white;
-    padding: 30px 35px;
-    border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    width: 90%;
     max-width: 400px;
-    width: 100%;
     transition: all 0.3s ease;
 }
 
 label {
-    font-weight: 600;
-    color: #34495e;
+    font-weight: bold;
+    color: #444;
     display: block;
     margin-bottom: 8px;
     font-size: 15px;
+    text-align: left;
 }
 
 input[type="email"] {
     width: 100%;
     padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+    border: 1.5px solid #ccc;
+    border-radius: 10px;
     font-size: 14px;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    font-family: var(--fuente-cuerpo);
 }
 
 input[type="email"]:focus {
-    border-color: #3498db;
+    border-color: var(--color-principal);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    box-shadow: 0 0 0 4px rgba(204, 84, 67, 0.1);
 }
 
-button {
-    margin-top: 10px;
+button[type="submit"] {
+    margin-top: 20px;
     width: 100%;
     padding: 12px;
-    background-color: #3498db;
+    background-color: var(--color-principal);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
+    font-family: var(--fuente-cuerpo);
     font-weight: bold;
     font-size: 15px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-button:hover {
-    background-color: #2c80c8;
+button[type="submit"]:hover {
+    background-color: var(--color-secundario);
+    transform: scale(1.02);
 }
 
 p[th\\:if] {
@@ -84,10 +100,10 @@ p[th\\:if] {
 /* Responsivo */
 @media (max-width: 480px) {
     form {
-        padding: 20px;
+        padding: 1.5rem;
     }
 
     h2 {
-        font-size: 24px;
+        font-size: 1.5em;
     }
 }

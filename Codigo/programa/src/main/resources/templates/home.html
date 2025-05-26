@@ -50,7 +50,7 @@
 
 <div class="anuncios-grid">
 
-    <!-- Si el usuario está logueado -->
+
     <div th:if="${usuario != null}" th:each="publicacion : ${publicaciones}" class="anuncio">
         <form th:action="@{/detalle}" method="get">
             <input type="hidden" name="id" th:value="${publicacion.id}" />
@@ -64,7 +64,7 @@
         </form>
     </div>
 
-    <!-- Si el usuario NO está logueado -->
+
     <div th:if="${usuario == null}" th:each="publicacion : ${publicaciones}" class="anuncio">
         <form th:action="@{/nl/detalle}" method="get">
             <input type="hidden" name="id" th:value="${publicacion.id}" />

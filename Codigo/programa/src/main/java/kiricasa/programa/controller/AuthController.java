@@ -63,38 +63,47 @@ public String login(
 }
 
     @PostMapping("/register")
-    /**
-     * * * Muestra la vista de registro
-     * @param request
-     * @param bindingResult
-     * @param model
-     * @param session
-     * @return
-     */
-    public String register(
-            @Valid @ModelAttribute("registerRequest") RegisterRequest request,
-            BindingResult bindingResult,
-            Model model,
-            HttpSession session
-    ) {
-        // Si hay errores de validación, volvemos a la vista de registro
+public String register(
+        @Valid @ModelAttribute("registerRequest") RegisterRequest request,
+        BindingResult bindingResult,
+        Model model,
+        HttpSession session
+) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("org.springframework.validation.BindingResult.registerRequest", bindingResult);
-            model.addAttribute("registerRequest", request);
-            return "register";
+        model.addAttribute("org.springframework.validation.BindingResult.registerRequest", bindingResult);
+        model.addAttribute("registerRequest", request);
+        return "registro";
+    }
+        if(request.getFechaNacimiento() != null && request.getFechaNacimiento().getYear() < 1950) {
+             model.addAttribute("registerRequest", request);
+            model.addAttribute("error", "La fecha de nacimiento no puede ser anterior a 1900");
+            return "registro";
         }
-
-        // Si todo OK, procedemos a crear y autenticar
+         if (!request.getNumero().matches("\\d{9,15}")) {
+        model.addAttribute("registerRequest", request);
+        model.addAttribute("error", "El número de teléfono debe contener entre 9 y 15 dígitos.");
+        return "registro";
+    }
+    try {
+        // Intentamos registrar al usuario
         String token = authService.register(request).getToken();
         session.setAttribute("jwt", token);
 
         UsuarioModel usuario = usuarioRepository
-            .findByNombreIgnoreCase(request.getNombre())
-            .orElse(null);
+                .findByNombreIgnoreCase(request.getNombre())
+                .orElse(null);
         session.setAttribute("usuario", usuario);
 
         return "redirect:/home";
+
+    } catch (RuntimeException ex) {
+        // Capturamos errores como email, nombre o número duplicado
+        model.addAttribute("registerRequest", request);
+        model.addAttribute("error", ex.getMessage());
+       return "registro";
     }
+}
+
 
 
 @GetMapping("/recupera")

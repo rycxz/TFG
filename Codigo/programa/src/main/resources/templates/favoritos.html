@@ -22,7 +22,7 @@
 </head>
 <body>
 
-<!-- Header -->
+
 <div th:if="${usuario == null}">
     <div th:replace="fragmentos/header :: header_nologged"></div>
 </div>
@@ -37,7 +37,7 @@
     <div class="favoritos-grid">
         <div th:each="fav : ${favoritos}" class="favorito-card">
 
-            <!-- Botón eliminar (corazón) fuera del botón de la publicación -->
+
             <form th:action="@{/favoritos/eliminar1}" method="post" class="inline-form">
                 <input type="hidden" name="publicacionId" th:value="${fav.publicacion.id}" />
                 <button type="submit" class="heart-btn" title="Quitar de favoritos">❤️</button>

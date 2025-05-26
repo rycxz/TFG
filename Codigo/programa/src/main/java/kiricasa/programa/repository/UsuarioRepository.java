@@ -58,4 +58,6 @@ public interface UsuarioRepository extends JpaRepository<UsuarioModel, Long> {
 
     boolean existsByEmailIgnoreCase(String email);
 
+
+
 }

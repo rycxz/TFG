@@ -3,6 +3,7 @@ package kiricasa.programa.requests;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -51,4 +52,5 @@ public class RegisterRequest {
     private UsuarioRol rol;
 
     private boolean recibirNotificaciones;
+
 }

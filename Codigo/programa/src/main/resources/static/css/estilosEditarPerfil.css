@@ -1,50 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Cabin+Rounded&family=Nunito:wght@800&display=swap');
 
-/* ========== ESTILOS GENERALES ========== */
+:root {
+    --color-principal: #cc5443;
+    --color-secundario: #a54034;
+    --color-fondo: #fef7f3;
+    --fuente-titulo: 'Nunito', sans-serif;
+    --fuente-cuerpo: 'Cabin Rounded', sans-serif;
+}
+
 body {
-    font-family: 'Cabin Rounded', sans-serif;
-    background-color: #f5f7fa;
+    font-family: var(--fuente-cuerpo);
+    background-color: var(--color-fondo);
     color: #333;
     margin: 0;
     padding: 0;
 }
 
-/* ========== TÍTULO ========== */
+/* TÍTULO */
 .titulo-editar {
     text-align: center;
     font-size: 2.3rem;
-    margin: 30px 0 20px;
-    color: #3498db;
+    margin: 40px 0 25px;
+    color: var(--color-principal);
+    font-family: var(--fuente-titulo);
 }
 
-/* ========== FORMULARIO ========== */
+/* FORMULARIO */
 .formulario-editar-perfil {
     max-width: 600px;
     margin: 0 auto 50px;
-    padding: 25px;
+    padding: 30px;
     background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 18px;
 }
 
 .formulario-editar-perfil label {
     font-weight: bold;
-    margin-bottom: 5px;
-    color: #2c3e50;
+    margin-bottom: 6px;
+    color: #444;
+    font-size: 0.95rem;
 }
 
 .formulario-editar-perfil input[type="text"],
 .formulario-editar-perfil input[type="email"],
 .formulario-editar-perfil input[type="date"],
 .formulario-editar-perfil input[type="file"] {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+    padding: 12px;
+    border: 1.5px solid #ccc;
+    border-radius: 10px;
     font-size: 1rem;
     width: 100%;
     box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.formulario-editar-perfil input:focus {
+    border-color: var(--color-principal);
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(204, 84, 67, 0.1);
 }
 
 .formulario-editar-perfil input[type="checkbox"] {
@@ -52,7 +69,7 @@ body {
     margin-right: 8px;
 }
 
-/* ========== BOTONES ========== */
+/* BOTONES */
 .botones-formulario {
     display: flex;
     justify-content: flex-end;
@@ -62,41 +79,44 @@ body {
 
 .boton-guardar,
 .boton-cancelar {
-    padding: 10px 18px;
+    padding: 12px 22px;
     font-size: 1rem;
     border: none;
-    border-radius: 6px;
+    border-radius: 10px;
     cursor: pointer;
     text-decoration: none;
-    transition: background-color 0.3s ease;
+    font-family: var(--fuente-cuerpo);
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .boton-guardar {
-    background-color: #3498db;
+    background-color: var(--color-principal);
     color: white;
+    font-weight: bold;
 }
 
 .boton-guardar:hover {
-    background-color: #2980b9;
+    background-color: var(--color-secundario);
+    transform: scale(1.03);
 }
 
 .boton-cancelar {
-    background-color: #e0e0e0;
+    background-color: #ccc;
     color: #333;
 }
 
 .boton-cancelar:hover {
-    background-color: #cfcfcf;
+    background-color: #b1b1b1;
 }
 
-/* ========== RESPONSIVE ========== */
+/* RESPONSIVE */
 @media (max-width: 500px) {
     .formulario-editar-perfil {
         padding: 20px;
     }
 
     .titulo-editar {
-        font-size: 1.8rem;
+        font-size: 1.9rem;
     }
 
     .botones-formulario {
@@ -107,5 +127,6 @@ body {
     .boton-guardar,
     .boton-cancelar {
         width: 100%;
+        text-align: center;
     }
 }

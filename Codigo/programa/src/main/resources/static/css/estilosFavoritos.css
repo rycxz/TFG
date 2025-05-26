@@ -1,76 +1,90 @@
-/* Contenedor general */
+@import url('https://fonts.googleapis.com/css2?family=Cabin+Rounded&family=Nunito:wght@800&display=swap');
+
+:root {
+    --color-principal: #cc5443;
+    --color-secundario: #a54034;
+    --color-fondo: #fef7f3;
+    --fuente-titulo: 'Nunito', sans-serif;
+    --fuente-cuerpo: 'Cabin Rounded', sans-serif;
+}
+
+body {
+    background-color: var(--color-fondo);
+    font-family: var(--fuente-cuerpo);
+    margin: 0;
+    padding: 0;
+}
+
+/* Contenedor principal */
 .favoritos-container {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 0 20px;
-    font-family: 'Cabin Rounded', sans-serif;
+    padding: 2rem;
+    text-align: center;
 }
 
 .favoritos-container h1 {
-    text-align: center;
-    color: #3498db;
-    margin-bottom: 30px;
+    font-family: var(--fuente-titulo);
     font-size: 2.5rem;
+    color: var(--color-principal);
+    margin-bottom: 2rem;
 }
 
-/* Grid de favoritos */
+/* Grid de tarjetas */
 .favoritos-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    justify-content: center;
+    align-items: stretch;
 }
 
 /* Tarjeta individual */
 .favorito-card {
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    padding: 1rem;
     position: relative;
-    transition: transform 0.2s;
+    transition: transform 0.2s ease;
 }
 
 .favorito-card:hover {
     transform: translateY(-5px);
 }
 
-/* Botón de imagen y texto */
+/* Imagen y ubicación */
 .favorito-button {
-    width: 100%;
-    padding: 0;
-    border: none;
-    background: none;
+    all: unset;
     cursor: pointer;
+    display: block;
     text-align: left;
+    width: 100%;
 }
 
 .favorito-button img {
     width: 100%;
     height: 180px;
     object-fit: cover;
-    display: block;
+    border-radius: 15px;
 }
 
 .favorito-button h3 {
-    padding: 10px 12px;
+    margin-top: 1rem;
     font-size: 1.1rem;
+    font-weight: bold;
     color: #333;
+    font-family: var(--fuente-cuerpo);
 }
 
 /* Botón corazón */
-.inline-form {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-}
-
 .heart-btn {
-    background: none;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: transparent;
     border: none;
     font-size: 1.5rem;
-    color: #e74c3c;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: transform 0.2s ease;
 }
 
 .heart-btn:hover {
@@ -78,16 +92,12 @@
 }
 
 /* Responsive */
-@media (max-width: 600px) {
-    .favoritos-container h1 {
-        font-size: 2rem;
+@media (max-width: 480px) {
+    .favorito-button img {
+        height: 150px;
     }
 
     .favorito-button h3 {
         font-size: 1rem;
-    }
-
-    .favorito-button img {
-        height: 150px;
     }
 }

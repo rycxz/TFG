@@ -15,7 +15,7 @@
       margin: 0;
       padding: 0;
       font-family: 'Nunito', sans-serif;
-      background: url('/images/fondo-login.png') no-repeat center center fixed;
+      background: url('/images/fondos/fondo-login.jpg') no-repeat center center fixed;
       background-size: cover;
       display: flex;
       justify-content: center;
@@ -40,7 +40,28 @@
       font-size: 1.2em;
       text-align: center;
       color: #333;
-    }
+    }.saltar-wrapper {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.btn-saltar {
+  display: inline-block;
+  padding: 0.8em;
+  background-color: var(--kiricasa-red);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-saltar:hover {
+  background-color: #b94535;
+}
 
     .register-link {
       display: flex;
@@ -154,6 +175,7 @@
       </div>
 <div th:if="${loginError}" style="color:red; margin-bottom:1em;">
   <span th:text="${loginError}"></span>
+
 </div>
       <div class="login-buttons">
         <button type="submit">Iniciar Sesión</button>
@@ -161,6 +183,9 @@
         th:onclick="|window.location.href='@{/auth/recupera}'|">
   Recuperar Contraseña
 </button>
+<div class="saltar-wrapper">
+    <a href="/nl/home" class="btn-saltar">Saltar →</a>
+</div>
       </div>
     </form>
   </div>

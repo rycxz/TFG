@@ -40,7 +40,7 @@
          th:classappend="${#strings.isEmpty(img) or img == 'predeterminada.png'} ? ' vacia' : ''"
          th:each="img, iterStat : ${publicacion.fotos}">
 
-        <!-- Mostrar input de subida si la imagen está vacía -->
+
         <form th:if="${#strings.isEmpty(img) or img == 'predeterminada.png'}"
               th:action="@{'/publicacion/editar/' + ${publicacion.id} + '/subir-imagen'}"
               method="post"
@@ -58,7 +58,7 @@
             </label>
         </form>
 
-        <!-- Mostrar imagen real con botón eliminar -->
+
         <div th:if="${not #strings.isEmpty(img) and img != 'predeterminada.png'}">
             <img th:src="@{'/uploads/publicaciones/' + ${publicacion.carpeta} + '/' + ${img}}"
                  alt="Imagen anuncio"
@@ -67,15 +67,13 @@
                class="boton-eliminar">✖</a>
         </div>
 
-        <!-- Badge solo para imagen 0 -->
+
         <div th:if="${iterStat.index == 0}" class="badge-principal">Principal</div>
     </div>
 </div>
 
 
 
-
-    <!-- FORMULARIO -->
     <form th:action="@{'/publicacion/editar/' + ${publicacion.id} + '/editarinfo'}" method="post" enctype="multipart/form-data"
           class="formulario-editar-publicacion">
         <input type="hidden" name="id" th:value="${publicacion.id}" />

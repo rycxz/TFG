@@ -140,28 +140,25 @@ body {
     }
 }
 
-/* SECCIÓN DE CATEGORÍAS */
-
-
-/* Botón Publicar Anuncio */
-.publicar-anuncio {
-    margin-top: 20px;
-}
-
 .boton-publicar {
     display: inline-block;
-    padding: 10px 20px;
-    background-color: #2ecc71;
-    color: white;
-    font-weight: bold;
-    border-radius: 8px;
+    background-color: #cc5443; /* Color Kiricasa */
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1em;
+    padding: 0.75em 1.5em;
+    border-radius: 12px;
     text-decoration: none;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .boton-publicar:hover {
-    background-color: #27ae60;
+    background-color: #a54034;
+    transform: scale(1.03);
 }
+
 
 
 .categorias-container {
