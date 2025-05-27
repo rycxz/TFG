@@ -22,7 +22,10 @@ public class HomeController {
 
     private final PublicacionRepository publicacionRepository;
     private final BarriosRepository barriosRepository;
-
+        @GetMapping("/")
+        public String redireccionRaiz() {
+            return "redirect:/nl/home";
+        }
     @GetMapping("/home")
     /**
      * * Muestra la vista de inicio
@@ -72,12 +75,6 @@ public class HomeController {
             publicaciones = publicacionRepository.findAll();
         }
 
-        // Primera foto como principal
-        for (PublicacionModel pub : publicaciones) {
-            if (!pub.getFotos().isEmpty()) {
-                pub.setImagen(pub.getFotos().get(0));
-            }
-        }
 
         model.addAttribute("publicaciones", publicaciones);
         return "home";
